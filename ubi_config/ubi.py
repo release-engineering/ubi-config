@@ -100,9 +100,6 @@ class Loader(object):
               b. or load all config files from a local_repo
               ##TODO: make it git aware
         """
-        if not file_name.endswith('.yaml'):
-            file_name += '.yaml'
-
         if not self.local:
             # find the right branch from the mapping
             branch = self.files_branch_map[file_name]
@@ -169,10 +166,10 @@ class Loader(object):
         file_list = []
         if recursive:
             for root, _, files in os.walk(self.local_repo):
-                files = [os.path.join(root, f) for f in files if f.endswith('.yaml')]
+                files = [os.path.join(root, f) for f in files if f.endswith(('.yaml', '.yml'))]
                 file_list.extend(files)
         else:
-            file_list = [file for file in os.listdir(self.local_repo) if file.endswith('yaml')]
+            file_list = [file for file in os.listdir(self.local_repo) if file.endswith(('yaml', '.yml'))]
 
         return file_list
 
@@ -187,7 +184,7 @@ class Loader(object):
                                                             recursive=recursive)
             json_response = self.session.get(file_list_api).json()
             file_list = [file['path'] for file in json_response
-                         if file['name'].endswith('.yaml')]
+                         if file['name'].endswith(('.yaml', '.yml'))]
             for file in file_list:
                 files_branch_map[file] = branch
         return files_branch_map
