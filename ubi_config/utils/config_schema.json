@@ -1,0 +1,56 @@
+{
+    "title": "Schema for UBI config",
+    "type": "object",
+    "definitions": {
+        "content_sets_base": {
+            "type": "object",
+            "properties": {
+                "input": {"type": "string"},
+                "output": {"type": "string"}
+                },
+            "required": ["input", "output"]
+            },
+        "module": {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"},
+                "stream": {"type": "number"},
+                "profiles":{"type": "array",
+                            "items": {"type": "string"}
+                        }
+                },
+            "required": ["name", "stream"]
+            }
+    },
+    "content_sets": {
+        "debuginfo": {"$ref": "#/definitions/content_sets_base"},
+        "rpm": {"$ref": "#/definitions/content_sets_base"},
+        "srpm": {"$ref": "#/definitions/content_sets_base"}
+    },
+    "arches": {
+        "type": "array",
+        "items": {"type": "string"}
+    },
+    "modules": {
+        "type": "object",
+        "properties": {
+            "include": {
+                "type": "array",
+                "items":{"$ref": "#/definitions/module"}
+                }
+            }
+        },
+    "packages": {
+        "type": "object",
+        "properties": {
+            "include": {
+                "type": "array",
+                "items": {"type":"string"}
+                },
+            "exclude": {
+                "type": "array",
+                "items": {"type": "string"}
+                }
+            }
+        }
+}
