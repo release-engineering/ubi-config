@@ -21,26 +21,31 @@ class FakeResponse():
         # currently it's not demanded.
         return None
 
+
 @pytest.fixture
 def dnf7_config_file():
     dnf7 = open(os.path.join(TEST_DATA_DIR, 'configs/dnf7/rhel-atomic-host.yaml'))
     return dnf7
+
 
 @pytest.fixture
 def ubi7_config_file():
     ubi7 = open(os.path.join(TEST_DATA_DIR, 'configs/ubi7/rhel-7-for-power-le.yaml'))
     return ubi7
 
+
 @pytest.fixture
 def files_branch_map():
     return OrderedDict({'rhel-atomic-host.yaml': 'dnf7',
                         'rhel-7-for-power-le.yaml': 'ubi7'})
+
 
 @pytest.fixture
 def response():
     def make_response(content):
         return FakeResponse(content)
     return make_response
+
 
 @patch('requests.Session')
 @patch('ubi_config.ubi.Loader._pre_load')
@@ -65,6 +70,7 @@ def test_load_from_local():
     config = loader.load(os.path.join(TEST_DATA_DIR, 'configs/dnf7/rhel-atomic-host.yaml'))
     assert isinstance(config, ubi.UbiConfig)
 
+
 def test_load_all_from_local():
     repo = os.path.join(TEST_DATA_DIR, 'configs/dnf7')
     loader = ubi.get_loader(local=True, local_repo=repo)
@@ -72,12 +78,14 @@ def test_load_all_from_local():
     assert len(configs) == 1
     assert isinstance(configs[0], ubi.UbiConfig)
 
+
 def test_load_all_from_local_recursive():
     repo = os.path.join(TEST_DATA_DIR, 'configs')
     loader = ubi.get_loader(local=True, local_repo=repo)
     configs = loader.load_all(recursive=True)
     assert len(configs) == 2
     assert isinstance(configs[0], ubi.UbiConfig)
+
 
 def test_syntax_from_config_file():
     loader = ubi.get_loader(local=True, local_repo=TEST_DATA_DIR)
@@ -99,6 +107,7 @@ DEFAULT_UBI_URL in your environment')
         assert isinstance(e, type(expected_error))
         assert e.args == expected_error.args
     ubi.DEFAULT_UBI_REPO = 'https://contentdelivery.com/ubi/data'
+
 
 def test_load_all_from_local_without_repo_set():
     loader = ubi.get_loader(local=True)

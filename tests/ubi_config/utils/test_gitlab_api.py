@@ -21,6 +21,7 @@ def test_get_branch_list_api(v4_repo_api, v4_api_prefix):
 	expected_branch_api = urljoin(v4_api_prefix, 'repository/branches')
 	assert v4_repo_api.get_branch_list_api() ==  expected_branch_api
 
+
 def test_get_file_list_api(v4_repo_api, v4_api_prefix):
 	expected_file_list_api = urljoin(v4_api_prefix, 'repository/tree?ref=master&recursive=False')
 	v4_repo_api.get_file_list_api() == expected_file_list_api
