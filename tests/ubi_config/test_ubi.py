@@ -56,9 +56,10 @@ def test_load_all_from_default_repo(mocked_pre_load, mocked_session, files_branc
                                                    response(ubi7_config_file)]
     loader = ubi.get_loader()
     configs = loader.load_all()
+    configs = sorted(configs, key=repr)
     assert len(configs) == 2
     assert isinstance(configs[0], ubi.UbiConfig)
-    assert configs[0].modules.whitelist[0].name == 'nodejs'
+    assert str(configs[1]) == 'rhel-atomic-host.yaml'
 
 
 def test_load_from_local():
@@ -153,3 +154,11 @@ def test_pre_load(mocked_get_branches, mocked_session, files_branch_map):
     expected_map = files_branch_map
     actual_files_branch_map = loader.files_branch_map
     assert expected_map == actual_files_branch_map
+
+
+def test_ubi_config(dnf7_config_file):
+    config_dict = yaml.safe_load(dnf7_config_file)
+    config = ubi.UbiConfig.load_from_dict(config_dict, 'rhel-atomic-host.yaml')
+    assert config.modules[0].name == 'nodejs'
+    assert config.content_sets.rpm.input == 'rhel-atomic-host-rpms'
+    assert str(config.packages.blacklist[0]) == 'kernel*'

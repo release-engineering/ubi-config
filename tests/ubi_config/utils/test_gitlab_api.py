@@ -38,3 +38,12 @@ def test_file_content_api(v4_repo_api, v4_api_prefix):
 def test_gitlab_api_v3():
     repo_api = gitlab.RepoApi('https://test-host.com/ubi/data', v_3=True)
     assert repo_api.api_url == 'https://test-host.com/api/v3/projects/ubi%2Fdata/'
+
+
+def test_host_name_invalid():
+    expect_msg = "The hostname must end with '.com|org|net' or set GIT_LAB_URL_FMT by yourself"
+    try:
+        gitlab.RepoApi('https://test-host.cc/ubi/data')
+        raise AssertionError('should fail!')
+    except ValueError as e:
+        assert e.args == (expect_msg,)

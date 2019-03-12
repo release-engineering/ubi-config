@@ -18,6 +18,7 @@ def test_pack_with_dot():
     pkg = packages.Package(pkg_info, arches)
     assert pkg.name == 'python2.7'
     assert pkg.arch is None
+    assert repr(pkg) == 'python2.7'
 
 
 def test_while_list_package():
@@ -51,10 +52,11 @@ def test_modules():
                         {'name': 'nodejs', 'stream': 10}]}
     md = modules.Modules.load_from_dict(data)
     assert len(md.whitelist) == 2
-    assert md.whitelist[0].name == 'nodejs'
-    assert md.whitelist[0].stream == 8
-    assert md.whitelist[0].profiles == ['interpreter']
-    assert md.whitelist[1].stream == 10
+    assert md[0].name == 'nodejs'
+    assert md[0].stream == 8
+    assert md[0].profiles == ['interpreter']
+    assert md[1].stream == 10
+    assert repr(md[1]) == 'nodejs'
 
 
 def test_content_sets():

@@ -69,6 +69,19 @@ class UbiConfig(object):
     def __repr__(self):
         return self.file_name
 
+    @classmethod
+    def load_from_dict(cls, data, file_name):
+        m_data = modules.Modules.load_from_dict(data.get('modules', {}))
+        pkgs = data.get('packages', {})
+        pkgs_data = packages.Packages(pkgs.get('include', []),
+                                      pkgs.get('exclude', []),
+                                      data.get('arches', []))
+        cs_map = content_sets.ContentSetsMapping.load_from_dict(data['content_sets'])
+        # use the simplified file name
+        file_name = file_name.split('/')[-1]
+
+        return cls(cs=cs_map, pkgs=pkgs_data, mds=m_data, file_name=file_name)
+
 
 class Loader(object):
     """ load configuration from default repo or from local file."""
@@ -123,16 +136,8 @@ class Loader(object):
 
         # validate input data
         validate_config(config_dict)
-        m_data = modules.Modules.load_from_dict(config_dict.get('modules', {}))
-        pkgs = config_dict.get('packages', {})
-        pkgs_data = packages.Packages(pkgs.get('include', []),
-                                      pkgs.get('exclude', []),
-                                      config_dict.get('arches', []))
-        cs_map = content_sets.ContentSetsMapping.load_from_dict(config_dict['content_sets'])
-        # use the simplified file name
-        file_name = file_name.split('/')[-1]
 
-        return UbiConfig(cs_map, pkgs_data, m_data, file_name)
+        return UbiConfig.load_from_dict(config_dict, file_name)
 
     def load_all(self, recursive=False):
         """get the list of config files from repo and call load on every file.
