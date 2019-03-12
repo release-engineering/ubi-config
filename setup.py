@@ -27,8 +27,7 @@ setup(
     packages=['ubi_config',
               'ubi_config.utils',
               'ubi_config.utils.api',
-              'ubi_config.config_types'
-            ],
+              'ubi_config.config_types'],
     package_data={'ubi_config': ['utils/config_schema.json']},
     url='https://github.com/release-engineering/ubi-config',
     license='GNU General Public License',
@@ -47,4 +46,3 @@ setup(
     ],
     install_requires=get_requirements(),
 )
-

@@ -1,5 +1,6 @@
 """This module abstract the 'packages' content type"""
 
+
 class Package(object):
     def __init__(self, package, arches):
         self.package = package

@@ -1,8 +1,7 @@
 import os
 
-from collections import OrderedDict
 import pytest
-from mock import patch, MagicMock
+from mock import patch
 import yaml
 
 from ubi_config import ubi
@@ -36,8 +35,8 @@ def ubi7_config_file():
 
 @pytest.fixture
 def files_branch_map():
-    return OrderedDict({'rhel-atomic-host.yaml': 'dnf7',
-                        'rhel-7-for-power-le.yaml': 'ubi7'})
+    return {'rhel-atomic-host.yaml': 'dnf7',
+            'rhel-7-for-power-le.yaml': 'ubi7'}
 
 
 @pytest.fixture
@@ -54,14 +53,13 @@ def test_load_all_from_default_repo(mocked_pre_load, mocked_session, files_branc
     mocked_pre_load.return_value = files_branch_map
     mocked_session.return_value.get.side_effect = ['200 OK',
                                                    response(dnf7_config_file),
-                                                   response(ubi7_config_file)
-                                                ]
+                                                   response(ubi7_config_file)]
     loader = ubi.get_loader()
-    # import pdb; pdb.set_trace()
     configs = loader.load_all()
+    configs = sorted(configs, key=repr)
     assert len(configs) == 2
     assert isinstance(configs[0], ubi.UbiConfig)
-    assert configs[0].modules.whitelist[0].name == 'nodejs'
+    assert str(configs[1]) == 'rhel-atomic-host.yaml'
 
 
 def test_load_from_local():
@@ -90,7 +88,7 @@ def test_load_all_from_local_recursive():
 def test_syntax_from_config_file():
     loader = ubi.get_loader(local=True, local_repo=TEST_DATA_DIR)
     try:
-        configs = loader.load('bad_configs/syntax_error.yaml')
+        loader.load('bad_configs/syntax_error.yaml')
         raise AssertionError('load should fail!')
     except yaml.YAMLError as e:
         assert e.problem == "expected <block end>, but found '?'"
@@ -101,7 +99,7 @@ def test_default_or_local_repo_not_set():
     expected_error = ValueError('Please either set use_local or define \
 DEFAULT_UBI_URL in your environment')
     try:
-        loader = ubi.get_loader()
+        ubi.get_loader()
         raise AssertionError('should not get a loader!')
     except ValueError as e:
         assert isinstance(e, type(expected_error))
@@ -124,7 +122,7 @@ def test_get_empty_branches(mocked_session):
     repo_apis = RepoApi(ubi.DEFAULT_UBI_REPO)
     exception = RuntimeError('Please check your DEFAULT_UBI_REPO is in right format')
     try:
-        loader = ubi.Loader(session=mocked_session, repo_api=repo_apis)
+        ubi.Loader(session=mocked_session, repo_api=repo_apis)
         raise AssertionError('test should fail!')
     except RuntimeError as actual_exception:
         assert actual_exception.args == exception.args
@@ -156,3 +154,11 @@ def test_pre_load(mocked_get_branches, mocked_session, files_branch_map):
     expected_map = files_branch_map
     actual_files_branch_map = loader.files_branch_map
     assert expected_map == actual_files_branch_map
+
+
+def test_ubi_config(dnf7_config_file):
+    config_dict = yaml.safe_load(dnf7_config_file)
+    config = ubi.UbiConfig.load_from_dict(config_dict, 'rhel-atomic-host.yaml')
+    assert config.modules[0].name == 'nodejs'
+    assert config.content_sets.rpm.input == 'rhel-atomic-host-rpms'
+    assert str(config.packages.blacklist[0]) == 'kernel*'

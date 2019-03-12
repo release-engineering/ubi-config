@@ -1,21 +1,15 @@
 """provide gitlab api used to read repositories"""
 import os
 import re
-import logging
 
 from six.moves.urllib.parse import urljoin
 
 
 DEFAULT_GIT_LAB_URL_FMT = re.compile(r"(?P<host>.+com|org|net)/(?P<project>.+)")
 
-API_FORMAT = "%s/api/v%s/projects/%s/" # hostname/api/:apiversion/projects/:id/
+API_FORMAT = "%s/api/v%s/projects/%s/"  # hostname/api/:apiversion/projects/:id/
 
-if os.getenv("GIT_LAB_URL_FMT"):
-    GIT_LAB_URL_FMT = re.compile(os.getenv("GIT_LAB_URL_FMT"))
-else:
-    GIT_LAB_URL_FMT = DEFAULT_GIT_LAB_URL_FMT
-
-LOG = logging.getLogger('ubi_config')
+GIT_LAB_URL_FMT = re.compile(os.getenv("GIT_LAB_URL_FMT", DEFAULT_GIT_LAB_URL_FMT))
 
 
 class RepoApi(object):
@@ -29,9 +23,8 @@ class RepoApi(object):
     def __init__(self, repo_url, v_3=False):
         m = GIT_LAB_URL_FMT.match(repo_url)
         if not m:
-            LOG.error("The hostname must end with '.com|org|net' \
+            raise ValueError("The hostname must end with '.com|org|net' \
 or set GIT_LAB_URL_FMT by yourself")
-            raise ValueError
         self.host = m.group('host')
         self.repo_id = m.group('project').replace('/', '%2F')
         self.v_3 = v_3
