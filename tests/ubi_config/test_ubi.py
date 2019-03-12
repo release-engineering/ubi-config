@@ -85,7 +85,7 @@ def test_load_all_from_local_recursive():
     assert isinstance(configs[0], ubi.UbiConfig)
 
 
-def test_syntax_from_config_file():
+def test_syntax_error_from_config_file():
     loader = ubi.get_loader(local=True, local_repo=TEST_DATA_DIR)
     try:
         loader.load('bad_configs/syntax_error.yaml')
