@@ -169,7 +169,8 @@ class Loader(object):
                 files = [os.path.join(root, f) for f in files if f.endswith(('.yaml', '.yml'))]
                 file_list.extend(files)
         else:
-            file_list = [file for file in os.listdir(self.local_repo) if file.endswith(('yaml', '.yml'))]
+            file_list = [file for file in os.listdir(self.local_repo)
+                         if file.endswith(('yaml', '.yml'))]
 
         return file_list
 

@@ -1,5 +1,6 @@
 """This module abstract the 'modules' content type"""
 
+
 class Module(object):
     """Define a single module"""
     def __init__(self, name, stream, profiles=None):

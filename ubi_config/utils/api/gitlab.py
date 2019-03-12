@@ -8,7 +8,7 @@ from six.moves.urllib.parse import urljoin
 
 DEFAULT_GIT_LAB_URL_FMT = re.compile(r"(?P<host>.+com|org|net)/(?P<project>.+)")
 
-API_FORMAT = "%s/api/v%s/projects/%s/" # hostname/api/:apiversion/projects/:id/
+API_FORMAT = "%s/api/v%s/projects/%s/"  # hostname/api/:apiversion/projects/:id/
 
 if os.getenv("GIT_LAB_URL_FMT"):
     GIT_LAB_URL_FMT = re.compile(os.getenv("GIT_LAB_URL_FMT"))

@@ -1,5 +1,6 @@
 """This module abstracts the 'content_sets' mappings"""
 
+
 class ContentSetMapping(object):
 
     def __init__(self, input_content, output_content):
@@ -12,7 +13,6 @@ class Rpm(ContentSetMapping):
     @property
     def type(self):
         return 'rpm'
-
 
 
 class Srpm(ContentSetMapping):
