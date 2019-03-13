@@ -53,9 +53,9 @@ def test_modules():
     md = modules.Modules.load_from_dict(data)
     assert len(md.whitelist) == 2
     assert md[0].name == 'nodejs'
-    assert md[0].stream == 8
+    assert md[0].stream == '8'
     assert md[0].profiles == ['interpreter']
-    assert md[1].stream == 10
+    assert md[1].stream == '10'
     assert repr(md[1]) == 'nodejs'
 
 
