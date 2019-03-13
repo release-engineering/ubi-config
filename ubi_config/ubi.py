@@ -48,7 +48,7 @@ def get_loader(local=False, local_repo=None):
     """
     if not local:
         if not DEFAULT_UBI_REPO:
-            msg = 'Please either set use_local or define DEFAULT_UBI_URL in your environment'
+            msg = 'Please either set use_local or define DEFAULT_UBI_REPO in your environment'
             raise ValueError(msg)
         session = requests.Session()
         repo_apis = RepoApi(DEFAULT_UBI_REPO.rstrip('/'))
