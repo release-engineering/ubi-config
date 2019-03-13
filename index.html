@@ -1,0 +1,293 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ubi-config &#8212; ubi-config  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="ubi-config">
+<h1>ubi-config<a class="headerlink" href="#ubi-config" title="Permalink to this headline">¶</a></h1>
+<p>A tool for loading UBI configurations</p>
+<div class="toctree-wrapper compound">
+</div>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/release-engineering/ubi-config">Source</a></li>
+<li><a class="reference external" href="https://release-engineering.github.io/ubi-config/">Documentation</a></li>
+<li><a class="reference external" href="https://pypi.org/project/ubi-config">PyPI</a></li>
+</ul>
+<div class="section" id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
+<p>Install the ubi-config from PyPI:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">ubi</span><span class="o">-</span><span class="n">config</span>
+</pre></div>
+</div>
+<p>If you want to load UBI configuration from default repo, set the default url
+in your environment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">DEFAULT_UBI_REPO</span><span class="o">=</span><span class="s1">&#39;https://some/url/&#39;</span>
+</pre></div>
+</div>
+<p>In your python code, simply call the function <code class="docutils literal notranslate"><span class="pre">get_loader</span></code> without passing any
+argument and call <code class="docutils literal notranslate"><span class="pre">load</span></code> on the returned object with the configuration file name
+No matter which branch is the config file in, it will load it for you.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ubi_config</span> <span class="kn">import</span> <span class="n">get_loader</span>
+
+<span class="n">default_loader</span> <span class="o">=</span> <span class="n">get_loader</span><span class="p">()</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">default_loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;ubi7_config_file&quot;</span><span class="p">)</span>
+
+<span class="c1"># the return config is an UbiConfig instance, wraps all types of UBI configurations</span>
+<span class="n">modules</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">modules</span>
+<span class="n">module_name</span> <span class="o">=</span> <span class="n">modules</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+<span class="k">print</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+
+<span class="c1"># the returned Load object can be reused to load other configuration file in the</span>
+<span class="c1"># same repo</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">default_loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;ubi8_config_file&quot;</span><span class="p">)</span>
+<span class="n">content_sets</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">content_sets</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="more-use-cases">
+<h2>More use cases<a class="headerlink" href="#more-use-cases" title="Permalink to this headline">¶</a></h2>
+<p>Except the above usage, there are some other use cases:</p>
+<ol class="arabic simple">
+<li>Load all configuration files from a repo by <code class="docutils literal notranslate"><span class="pre">load_all</span></code>:</li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ubi_config</span> <span class="kn">import</span> <span class="n">get_loader</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">get_loader</span><span class="p">()</span>
+<span class="n">configs</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load_all</span><span class="p">()</span>
+<span class="c1"># returns a list of UbiConfig objects</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li>Load configuration files from a local repo by setting <code class="docutils literal notranslate"><span class="pre">local</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ubi_config</span> <span class="kn">import</span> <span class="n">get_loader</span>
+
+<span class="n">local_loader</span> <span class="o">=</span> <span class="n">get_loader</span><span class="p">(</span><span class="n">local</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">local_loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;full/path/to/local_ubi7_config&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>3. If there’s a local repo inlcudes several configuration files, you can also set the repo
+path by passing <code class="docutils literal notranslate"><span class="pre">local_repo</span></code> to <code class="docutils literal notranslate"><span class="pre">get_loader</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ubi_config</span> <span class="kn">import</span> <span class="n">get_loader</span>
+
+<span class="n">local_loader</span> <span class="o">=</span> <span class="n">get_loader</span><span class="p">(</span><span class="n">use</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">local_repo</span><span class="o">=</span><span class="s1">&#39;repo/path&#39;</span><span class="p">)</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">local_loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;local_ubi7_config&#39;</span><span class="p">)</span>
+<span class="c1"># or load all config files</span>
+<span class="n">configs</span> <span class="o">=</span> <span class="n">local_loader</span><span class="o">.</span><span class="n">load_all</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can always reuse the loader</p>
+</div>
+<div class="section" id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ubi_config.get_loader">
+<code class="descclassname">ubi_config.</code><code class="descname">get_loader</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ubi_config.get_loader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a Loader instance which is used to load configurations.</p>
+<p>The default config file source is as <code class="docutils literal notranslate"><span class="pre">DEFAULT_UBI_URL/configfile.yaml</span></code>,
+when <code class="docutils literal notranslate"><span class="pre">local</span></code> is not set, it will check if the <code class="docutils literal notranslate"><span class="pre">DEFAULT_UBI_URL</span></code> is set
+or not, then creates a requests session and pass it to <code class="docutils literal notranslate"><span class="pre">Loader</span></code>.</p>
+<p>Or if <code class="docutils literal notranslate"><span class="pre">local</span></code> is set, then user can pass the local_repo address to
+Loader or send full path to <code class="docutils literal notranslate"><span class="pre">loader.load()</span></code>, for example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># use default config source</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">loader</span> <span class="o">=</span> <span class="n">get_loader</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">config_ubi7</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;ubi7&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">config</span><span class="p">)</span><span class="n">ubi7</span><span class="o">.</span><span class="n">content_sets</span><span class="o">.</span><span class="n">rpm</span><span class="o">.</span><span class="n">input</span>
+<span class="c1"># loader can be used repeatedly</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">config_ubi8</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;ubi8&#39;</span><span class="p">)</span>
+
+<span class="c1"># now use local file</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">loader</span> <span class="o">=</span> <span class="n">get_loader</span><span class="p">(</span><span class="n">use_local</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">config</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;full/path/to/configfile&#39;</span><span class="p">)</span>
+
+<span class="c1"># can pass local repo address as well</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">loader</span> <span class="o">=</span> <span class="n">get_loader</span><span class="p">(</span><span class="n">use_local</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">local_repo</span><span class="o">=</span><span class="s1">&#39;some/repo/path&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">config</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;ubi7&#39;</span><span class="p">)</span>
+<span class="c1"># can be reused</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">config_ubi8</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;ubi8&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If the default ubi url is not defined and use_local not set, error will
+be raised.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ubi_config.UbiConfig">
+<em class="property">class </em><code class="descclassname">ubi_config.</code><code class="descname">UbiConfig</code><span class="sig-paren">(</span><em>cs</em>, <em>pkgs</em>, <em>mds</em>, <em>file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ubi_config.UbiConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>wrap all UBI related configurations</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ubi_config.Loader">
+<em class="property">class </em><code class="descclassname">ubi_config.</code><code class="descname">Loader</code><span class="sig-paren">(</span><em>session=None</em>, <em>repo_api=None</em>, <em>local=False</em>, <em>local_repo=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ubi_config.Loader" title="Permalink to this definition">¶</a></dt>
+<dd><p>load configuration from default repo or from local file.</p>
+<dl class="method">
+<dt id="ubi_config.Loader.load">
+<code class="descname">load</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ubi_config.Loader.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a single configuration file and return a UbiConfig Object</p>
+<dl class="docutils">
+<dt>Use cases:</dt>
+<dd><dl class="first last docutils">
+<dt>Remote:</dt>
+<dd><ol class="first arabic simple">
+<li>repo url is the root url, such as host/project/:</li>
+</ol>
+<blockquote class="last">
+<div><ol class="loweralpha simple">
+<li>called by load_all() the branch will be read from the</li>
+</ol>
+<blockquote>
+<div>self.files_branch_map</div></blockquote>
+<ol class="loweralpha simple" start="2">
+<li>called directly by user, the branch will be read from
+self.files_branch_map</li>
+</ol>
+</div></blockquote>
+</dd>
+<dt>Local:</dt>
+<dd><ol class="first arabic simple">
+<li>called directly by user without self.local_repo specified:</li>
+</ol>
+<blockquote>
+<div>user needs to pass the full path</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>called by load_all():</li>
+</ol>
+<blockquote class="last">
+<div><ol class="loweralpha simple">
+<li>without defining the self.local_repo, error will be raised</li>
+</ol>
+<p>b. or load all config files from a local_repo
+##TODO: make it git aware</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="ubi_config.Loader.load_all">
+<code class="descname">load_all</code><span class="sig-paren">(</span><em>recursive=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ubi_config.Loader.load_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the list of config files from repo and call load on every file.
+Return a list of UbiConfig objects.</p>
+<p>If recursive is set, it will walk through the submodules, no matter local
+or remote</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">ubi-config</a></h1>
+
+
+
+<p class="blurb">A tool for loading UBI Configurations</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="index.html">API Reference</a></li>
+    
+    <li class="toctree-l1"><a href="genindex.html">Index</a></li>
+    
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Red Hat.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/release-engineering/ubi-config" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>
