@@ -56,7 +56,7 @@ in your environment:</p>
 <p>In your python code, simply call the function <code class="docutils literal notranslate"><span class="pre">get_loader</span></code> without passing any
 argument and call <code class="docutils literal notranslate"><span class="pre">load</span></code> on the returned object with the configuration file name
 No matter which branch is the config file in, it will load it for you.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ubi_config</span> <span class="kn">import</span> <span class="n">get_loader</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ubiconfig</span> <span class="kn">import</span> <span class="n">get_loader</span>
 
 <span class="n">default_loader</span> <span class="o">=</span> <span class="n">get_loader</span><span class="p">()</span>
 <span class="n">config</span> <span class="o">=</span> <span class="n">default_loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;ubi7_config_file&quot;</span><span class="p">)</span>
@@ -79,7 +79,7 @@ No matter which branch is the config file in, it will load it for you.</p>
 <ol class="arabic simple">
 <li>Load all configuration files from a repo by <code class="docutils literal notranslate"><span class="pre">load_all</span></code>:</li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ubi_config</span> <span class="kn">import</span> <span class="n">get_loader</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ubiconfig</span> <span class="kn">import</span> <span class="n">get_loader</span>
 <span class="n">loader</span> <span class="o">=</span> <span class="n">get_loader</span><span class="p">()</span>
 <span class="n">configs</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load_all</span><span class="p">()</span>
 <span class="c1"># returns a list of UbiConfig objects</span>
@@ -88,7 +88,7 @@ No matter which branch is the config file in, it will load it for you.</p>
 <ol class="arabic simple" start="2">
 <li>Load configuration files from a local repo by setting <code class="docutils literal notranslate"><span class="pre">local</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ubi_config</span> <span class="kn">import</span> <span class="n">get_loader</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ubiconfig</span> <span class="kn">import</span> <span class="n">get_loader</span>
 
 <span class="n">local_loader</span> <span class="o">=</span> <span class="n">get_loader</span><span class="p">(</span><span class="n">local</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">config</span> <span class="o">=</span> <span class="n">local_loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;full/path/to/local_ubi7_config&quot;</span><span class="p">)</span>
@@ -96,7 +96,7 @@ No matter which branch is the config file in, it will load it for you.</p>
 </div>
 <p>3. If there’s a local repo inlcudes several configuration files, you can also set the repo
 path by passing <code class="docutils literal notranslate"><span class="pre">local_repo</span></code> to <code class="docutils literal notranslate"><span class="pre">get_loader</span></code></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ubi_config</span> <span class="kn">import</span> <span class="n">get_loader</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ubiconfig</span> <span class="kn">import</span> <span class="n">get_loader</span>
 
 <span class="n">local_loader</span> <span class="o">=</span> <span class="n">get_loader</span><span class="p">(</span><span class="n">use</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">local_repo</span><span class="o">=</span><span class="s1">&#39;repo/path&#39;</span><span class="p">)</span>
 <span class="n">config</span> <span class="o">=</span> <span class="n">local_loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;local_ubi7_config&#39;</span><span class="p">)</span>
@@ -112,8 +112,8 @@ path by passing <code class="docutils literal notranslate"><span class="pre">loc
 <div class="section" id="api-reference">
 <h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="ubi_config.get_loader">
-<code class="descclassname">ubi_config.</code><code class="descname">get_loader</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ubi_config.get_loader" title="Permalink to this definition">¶</a></dt>
+<dt id="ubiconfig.get_loader">
+<code class="descclassname">ubiconfig.</code><code class="descname">get_loader</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.get_loader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a Loader instance which is used to load configurations.</p>
 <p>The default config file source is as <code class="docutils literal notranslate"><span class="pre">DEFAULT_UBI_URL/configfile.yaml</span></code>,
 when <code class="docutils literal notranslate"><span class="pre">local</span></code> is not set, it will check if the <code class="docutils literal notranslate"><span class="pre">DEFAULT_UBI_URL</span></code> is set
@@ -143,8 +143,8 @@ be raised.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="ubi_config.UbiConfig">
-<em class="property">class </em><code class="descclassname">ubi_config.</code><code class="descname">UbiConfig</code><span class="sig-paren">(</span><em>cs</em>, <em>pkgs</em>, <em>mds</em>, <em>file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ubi_config.UbiConfig" title="Permalink to this definition">¶</a></dt>
+<dt id="ubiconfig.UbiConfig">
+<em class="property">class </em><code class="descclassname">ubiconfig.</code><code class="descname">UbiConfig</code><span class="sig-paren">(</span><em>cs</em>, <em>pkgs</em>, <em>mds</em>, <em>file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.UbiConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrap all UBI related configurations
 Examples to access different configurations:
 Modules:</p>
@@ -161,12 +161,12 @@ config.content_sets.debuginfo.output</dd>
 </dd></dl>
 
 <dl class="class">
-<dt id="ubi_config.Loader">
-<em class="property">class </em><code class="descclassname">ubi_config.</code><code class="descname">Loader</code><span class="sig-paren">(</span><em>session=None</em>, <em>repo_api=None</em>, <em>local=False</em>, <em>local_repo=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ubi_config.Loader" title="Permalink to this definition">¶</a></dt>
+<dt id="ubiconfig.Loader">
+<em class="property">class </em><code class="descclassname">ubiconfig.</code><code class="descname">Loader</code><span class="sig-paren">(</span><em>session=None</em>, <em>repo_api=None</em>, <em>local=False</em>, <em>local_repo=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.Loader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load configuration from default repo or from local file.</p>
 <dl class="method">
-<dt id="ubi_config.Loader.load">
-<code class="descname">load</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ubi_config.Loader.load" title="Permalink to this definition">¶</a></dt>
+<dt id="ubiconfig.Loader.load">
+<code class="descname">load</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.Loader.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a single configuration file and return a UbiConfig Object</p>
 <dl class="docutils">
 <dt>Use cases:</dt>
@@ -200,8 +200,8 @@ it will find the right file in the right branch</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="ubi_config.Loader.load_all">
-<code class="descname">load_all</code><span class="sig-paren">(</span><em>recursive=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ubi_config.Loader.load_all" title="Permalink to this definition">¶</a></dt>
+<dt id="ubiconfig.Loader.load_all">
+<code class="descname">load_all</code><span class="sig-paren">(</span><em>recursive=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.Loader.load_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the list of config files from repo and call load on every file.
 Return a list of UbiConfig objects.</p>
 <p>If recursive is set, it will walk through the submodules, no matter local
@@ -239,9 +239,9 @@ or remote</p>
 <hr />
 <ul>
     
-    <li class="toctree-l1"><a href="genindex.html">Index</a></li>
-    
     <li class="toctree-l1"><a href="index.html">API Reference</a></li>
+    
+    <li class="toctree-l1"><a href="genindex.html">Index</a></li>
     
 </ul>
 <div class="relations">
