@@ -1,4 +1,4 @@
-from ubi_config.config_types import packages, modules, content_sets
+from ubiconfig.config_types import packages, modules, content_sets
 
 
 def test_package_with_arch():

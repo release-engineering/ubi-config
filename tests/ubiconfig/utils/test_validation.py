@@ -2,7 +2,7 @@ import os
 
 import yaml
 
-from ubi_config.utils import config_validation
+from ubiconfig.utils import config_validation
 
 TEST_DATA = os.path.join(os.path.dirname(__file__),
                          '../../data/configs/dnf7/rhel-atomic-host.yaml')

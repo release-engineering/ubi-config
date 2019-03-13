@@ -1,7 +1,7 @@
 import pytest
 from six.moves.urllib.parse import urljoin
 
-from ubi_config.utils.api import gitlab
+from ubiconfig.utils.api import gitlab
 
 
 @pytest.fixture

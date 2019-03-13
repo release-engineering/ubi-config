@@ -4,8 +4,8 @@ import pytest
 from mock import patch
 import yaml
 
-from ubi_config import ubi
-from ubi_config.utils.api.gitlab import RepoApi
+from ubiconfig import ubi
+from ubiconfig.utils.api.gitlab import RepoApi
 
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), '../data')
@@ -47,7 +47,7 @@ def response():
 
 
 @patch('requests.Session')
-@patch('ubi_config.ubi.Loader._pre_load')
+@patch('ubiconfig.ubi.Loader._pre_load')
 def test_load_all_from_default_repo(mocked_pre_load, mocked_session, files_branch_map,
                                     dnf7_config_file, ubi7_config_file, response):
     mocked_pre_load.return_value = files_branch_map
@@ -134,14 +134,14 @@ def test_get_branches(mocked_session):
                 {'name': 'ubi7', 'default': False, 'can_push': True}]
     mocked_session.get.return_value.json.return_value = branches
     repo_apis = RepoApi(ubi.DEFAULT_UBI_REPO)
-    with patch('ubi_config.ubi.Loader._pre_load'):
+    with patch('ubiconfig.ubi.Loader._pre_load'):
         loader = ubi.Loader(session=mocked_session, repo_api=repo_apis)
         actual_branches = loader._get_branches()
     assert actual_branches == ['dnf7', 'ubi7']
 
 
 @patch('requests.Session')
-@patch('ubi_config.ubi.Loader._get_branches')
+@patch('ubiconfig.ubi.Loader._get_branches')
 def test_pre_load(mocked_get_branches, mocked_session, files_branch_map):
     branches = ['dnf7', 'ubi7']
     mocked_get_branches.return_value = branches
