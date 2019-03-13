@@ -2,6 +2,24 @@ python-ubi-config
 ==================
 
 A Python library for reading UBI configurations
+
+[![Build Status](https://travis-ci.org/release-engineering/ubi-config.svg?branch=master)](https://travis-ci.org/release-engineering/ubi-config)
+[![Coverage Status](https://coveralls.io/repos/github/release-engineering/ubi-config/badge.svg?branch=master)](https://coveralls.io/github/release-engineering/ubi-config?branch=master)
+
+- [Source](https://github.com/release-engineering/ubi-config)
+- [Documentation](https://release-engineering.github.io/ubi-config/)
+- [PyPI](https://pypi.org/project/ubi-config)
+
+Installation
+------------
+
+Install the `ubi-config` package from PyPI.
+
+```
+pip install ubi-config
+```
+
+
 Usage Example
 -------------
 When there is `DEFAULT_UBI_REPO` set, user can load the config by passing the config file
