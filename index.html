@@ -74,7 +74,7 @@ No matter which branch is the config file in, it will load it for you.</p>
 </div>
 </div>
 <div class="section" id="more-use-cases">
-<h2>More use cases<a class="headerlink" href="#more-use-cases" title="Permalink to this headline">¶</a></h2>
+<h2>More Use Cases<a class="headerlink" href="#more-use-cases" title="Permalink to this headline">¶</a></h2>
 <p>Except the above usage, there are some other use cases:</p>
 <ol class="arabic simple">
 <li>Load all configuration files from a repo by <code class="docutils literal notranslate"><span class="pre">load_all</span></code>:</li>
@@ -102,6 +102,9 @@ path by passing <code class="docutils literal notranslate"><span class="pre">loc
 <span class="n">config</span> <span class="o">=</span> <span class="n">local_loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;local_ubi7_config&#39;</span><span class="p">)</span>
 <span class="c1"># or load all config files</span>
 <span class="n">configs</span> <span class="o">=</span> <span class="n">local_loader</span><span class="o">.</span><span class="n">load_all</span><span class="p">()</span>
+<span class="c1"># if there&#39;s sub directories include configuration files,</span>
+<span class="c1"># user can set ``recursive`` to True to load all of them</span>
+<span class="n">configs</span> <span class="o">=</span> <span class="n">local_loader</span><span class="o">.</span><span class="n">load_all</span><span class="p">(</span><span class="n">recursive</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>You can always reuse the loader</p>
@@ -142,13 +145,25 @@ be raised.</p>
 <dl class="class">
 <dt id="ubi_config.UbiConfig">
 <em class="property">class </em><code class="descclassname">ubi_config.</code><code class="descname">UbiConfig</code><span class="sig-paren">(</span><em>cs</em>, <em>pkgs</em>, <em>mds</em>, <em>file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ubi_config.UbiConfig" title="Permalink to this definition">¶</a></dt>
-<dd><p>wrap all UBI related configurations</p>
+<dd><p>Wrap all UBI related configurations
+Examples to access different configurations:
+Modules:</p>
+<blockquote>
+<div>config.modules[0].whitelist[0].name</div></blockquote>
+<dl class="docutils">
+<dt>Packages:</dt>
+<dd>config.packages.whitelist[0].name
+config.packages.blacklist[0].name</dd>
+<dt>ContentSets:</dt>
+<dd>config.content_sets.rpm.input
+config.content_sets.debuginfo.output</dd>
+</dl>
 </dd></dl>
 
 <dl class="class">
 <dt id="ubi_config.Loader">
 <em class="property">class </em><code class="descclassname">ubi_config.</code><code class="descname">Loader</code><span class="sig-paren">(</span><em>session=None</em>, <em>repo_api=None</em>, <em>local=False</em>, <em>local_repo=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ubi_config.Loader" title="Permalink to this definition">¶</a></dt>
-<dd><p>load configuration from default repo or from local file.</p>
+<dd><p>Load configuration from default repo or from local file.</p>
 <dl class="method">
 <dt id="ubi_config.Loader.load">
 <code class="descname">load</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ubi_config.Loader.load" title="Permalink to this definition">¶</a></dt>
@@ -157,20 +172,10 @@ be raised.</p>
 <dt>Use cases:</dt>
 <dd><dl class="first last docutils">
 <dt>Remote:</dt>
-<dd><ol class="first arabic simple">
-<li>repo url is the root url, such as host/project/:</li>
+<dd><ol class="first last arabic simple">
+<li>_pre_load ran in __init__, by passing the file_name to load,
+it will find the right file in the right branch</li>
 </ol>
-<blockquote class="last">
-<div><ol class="loweralpha simple">
-<li>called by load_all() the branch will be read from the</li>
-</ol>
-<blockquote>
-<div>self.files_branch_map</div></blockquote>
-<ol class="loweralpha simple" start="2">
-<li>called directly by user, the branch will be read from
-self.files_branch_map</li>
-</ol>
-</div></blockquote>
 </dd>
 <dt>Local:</dt>
 <dd><ol class="first arabic simple">
@@ -197,7 +202,7 @@ self.files_branch_map</li>
 <dl class="method">
 <dt id="ubi_config.Loader.load_all">
 <code class="descname">load_all</code><span class="sig-paren">(</span><em>recursive=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ubi_config.Loader.load_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>get the list of config files from repo and call load on every file.
+<dd><p>Get the list of config files from repo and call load on every file.
 Return a list of UbiConfig objects.</p>
 <p>If recursive is set, it will walk through the submodules, no matter local
 or remote</p>
@@ -234,9 +239,9 @@ or remote</p>
 <hr />
 <ul>
     
-    <li class="toctree-l1"><a href="index.html">API Reference</a></li>
-    
     <li class="toctree-l1"><a href="genindex.html">Index</a></li>
+    
+    <li class="toctree-l1"><a href="index.html">API Reference</a></li>
     
 </ul>
 <div class="relations">

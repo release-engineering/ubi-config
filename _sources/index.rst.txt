@@ -49,7 +49,7 @@ No matter which branch is the config file in, it will load it for you.
     config = default_loader.load("ubi8_config_file")
     content_sets = config.content_sets
 
-More use cases
+More Use Cases
 --------------
 
 Except the above usage, there are some other use cases:
@@ -83,6 +83,9 @@ path by passing ``local_repo`` to ``get_loader``
     config = local_loader.load('local_ubi7_config')
     # or load all config files
     configs = local_loader.load_all()
+    # if there's sub directories include configuration files,
+    # user can set ``recursive`` to True to load all of them
+    configs = local_loader.load_all(recursive=True)
 
 You can always reuse the loader
 
