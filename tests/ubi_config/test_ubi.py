@@ -97,7 +97,7 @@ def test_syntax_error_from_config_file():
 def test_default_or_local_repo_not_set():
     ubi.DEFAULT_UBI_REPO = ''
     expected_error = ValueError('Please either set use_local or define \
-DEFAULT_UBI_URL in your environment')
+DEFAULT_UBI_REPO in your environment')
     try:
         ubi.get_loader()
         raise AssertionError('should not get a loader!')

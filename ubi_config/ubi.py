@@ -48,7 +48,7 @@ def get_loader(local=False, local_repo=None):
     """
     if not local:
         if not DEFAULT_UBI_REPO:
-            msg = 'Please either set use_local or define DEFAULT_UBI_URL in your environment'
+            msg = 'Please either set use_local or define DEFAULT_UBI_REPO in your environment'
             raise ValueError(msg)
         session = requests.Session()
         repo_apis = RepoApi(DEFAULT_UBI_REPO.rstrip('/'))
@@ -59,7 +59,16 @@ def get_loader(local=False, local_repo=None):
 
 
 class UbiConfig(object):
-    """wrap all UBI related configurations"""
+    """Wrap all UBI related configurations
+    Examples to access different configurations:
+    Modules:
+      config.modules[0].whitelist[0].name
+    Packages:
+      config.packages.whitelist[0].name
+      config.packages.blacklist[0].name
+    ContentSets:
+      config.content_sets.rpm.input
+      config.content_sets.debuginfo.output"""
     def __init__(self, cs, pkgs, mds, file_name):
         self.content_sets = cs
         self.packages = pkgs
@@ -84,7 +93,7 @@ class UbiConfig(object):
 
 
 class Loader(object):
-    """ load configuration from default repo or from local file."""
+    """Load configuration from default repo or from local file."""
     def __init__(self, session=None, repo_api=None, local=False, local_repo=None):
         self.session = session
         self.repo_api = repo_api
@@ -99,12 +108,8 @@ class Loader(object):
 
         Use cases:
           Remote:
-            1. repo url is the root url, such as host/project/:
-              a. called by load_all() the branch will be read from the
-                self.files_branch_map
-              b. called directly by user, the branch will be read from
-                 self.files_branch_map
-
+            1. _pre_load ran in __init__, by passing the file_name to load,
+               it will find the right file in the right branch
           Local:
             1. called directly by user without self.local_repo specified:
               user needs to pass the full path
@@ -140,7 +145,7 @@ class Loader(object):
         return UbiConfig.load_from_dict(config_dict, file_name)
 
     def load_all(self, recursive=False):
-        """get the list of config files from repo and call load on every file.
+        """Get the list of config files from repo and call load on every file.
         Return a list of UbiConfig objects.
 
         If recursive is set, it will walk through the submodules, no matter local
@@ -180,7 +185,7 @@ class Loader(object):
         return file_list
 
     def _pre_load(self, recursive=False):
-        """iterate all branches to get a mapping of {file_path: branch,...}
+        """Iterate all branches to get a mapping of {file_path: branch,...}
         """
         files_branch_map = {}
         branches = self._get_branches()
