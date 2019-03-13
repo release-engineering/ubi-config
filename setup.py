@@ -2,7 +2,7 @@ from setuptools import setup
 
 
 def get_description():
-    return 'a simple tool used to load UBI config'
+    return 'A Python Library for accessing Universal Base Image configurations'
 
 
 def get_long_description():
@@ -24,11 +24,11 @@ setup(
     version='0.1.0',
     author='',
     author_email='',
-    packages=['ubi_config',
-              'ubi_config.utils',
-              'ubi_config.utils.api',
-              'ubi_config.config_types'],
-    package_data={'ubi_config': ['utils/config_schema.json']},
+    packages=['ubiconfig',
+              'ubiconfig.utils',
+              'ubiconfig.utils.api',
+              'ubiconfig.config_types'],
+    package_data={'ubiconfig': ['utils/config_schema.json']},
     url='https://github.com/release-engineering/ubi-config',
     license='GNU General Public License',
     description=get_description(),

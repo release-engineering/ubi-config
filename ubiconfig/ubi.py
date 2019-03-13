@@ -12,7 +12,7 @@ from .utils.api.gitlab import RepoApi
 DEFAULT_UBI_REPO = os.getenv("DEFAULT_UBI_REPO", "")
 
 logging.basicConfig()
-LOG = logging.getLogger('ubi_config')
+LOG = logging.getLogger('ubiconfig')
 
 
 def get_loader(local=False, local_repo=None):

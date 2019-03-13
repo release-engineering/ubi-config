@@ -34,7 +34,7 @@ No matter which branch is the config file in, it will load it for you.
 
 .. code-block:: python
 
-    from ubi_config import get_loader
+    from ubiconfig import get_loader
 
     default_loader = get_loader()
     config = default_loader.load("ubi7_config_file")
@@ -58,7 +58,7 @@ Except the above usage, there are some other use cases:
 
 .. code-block:: python
 
-    from ubi_config import get_loader
+    from ubiconfig import get_loader
     loader = get_loader()
     configs = loader.load_all()
     # returns a list of UbiConfig objects
@@ -67,7 +67,7 @@ Except the above usage, there are some other use cases:
 
 .. code-block:: python
 
-    from ubi_config import get_loader
+    from ubiconfig import get_loader
 
     local_loader = get_loader(local=True)
     config = local_loader.load("full/path/to/local_ubi7_config")
@@ -77,7 +77,7 @@ path by passing ``local_repo`` to ``get_loader``
 
 .. code-block:: python
 
-    from ubi_config import get_loader
+    from ubiconfig import get_loader
 
     local_loader = get_loader(use=True, local_repo='repo/path')
     config = local_loader.load('local_ubi7_config')
@@ -91,7 +91,7 @@ You can always reuse the loader
 
 API Reference
 -------------
-.. currentmodule:: ubi_config
+.. currentmodule:: ubiconfig
 .. function:: get_loader
 
     Get a Loader instance which is used to load configurations.
