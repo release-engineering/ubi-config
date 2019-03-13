@@ -5,7 +5,7 @@ class Module(object):
     """Define a single module"""
     def __init__(self, name, stream, profiles=None):
         self.name = name
-        self.stream = stream
+        self.stream = str(stream)
         self.profiles = profiles
 
     def __repr__(self):
@@ -13,7 +13,7 @@ class Module(object):
 
 
 class Modules(object):
-    """group of moudles"""
+    """group of modules"""
 
     def __init__(self, include):
         """
