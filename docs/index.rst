@@ -113,16 +113,16 @@ API Reference
       >>> config_ubi8 = loader.load('ubi8')
 
       # now use local file
-      >>> loader = get_loader(use_local=True)
+      >>> loader = get_loader(local=True)
       >>> config = loader.load('full/path/to/configfile')
 
       # can pass local repo address as well
-      >>> loader = get_loader(use_local=True, local_repo='some/repo/path')
+      >>> loader = get_loader(local=True, local_repo='some/repo/path')
       >>> config = loader.load('ubi7')
       # can be reused
       >>> config_ubi8 = loader.load('ubi8')
 
-    If the default ubi url is not defined and use_local not set, error will
+    If the default ubi url is not defined and local not set, error will
     be raised.
 
 .. autoclass:: UbiConfig

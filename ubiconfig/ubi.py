@@ -19,10 +19,10 @@ def get_loader(local=False, local_repo=None):
     """Get a Loader instance which is used to load configurations.
 
     The default config file source is as DEFAULT_UBI_REPO/configfile.yaml,
-    when use_local is not set, it will check if the DEFAULT_UBI_REPO is set
+    when local is not set, it will check if the DEFAULT_UBI_REPO is set
     or not, then creates a requests session and pass it to Loader.
 
-    Or if use_local is set, then user can pass the local_repo address to
+    Or if local is set, then user can pass the local_repo address to
     Loader or send full path to loader.load(), for example:
 
     # use default config source
@@ -33,22 +33,22 @@ def get_loader(local=False, local_repo=None):
     >>> config_ubi8 = loader.load('ubi8')
 
     # now use local file
-    >>> loader = get_loader(use_local=True)
+    >>> loader = get_loader(local=True)
     >>> config = loader.load('full/path/to/configfile')
 
     # can pass local repo address as well
-    >>> loader = get_loader(use_local=True, local_repo='some/repo/path')
+    >>> loader = get_loader(local=True, local_repo='some/repo/path')
     >>> config = loader.load('ubi7')
     # can be reused
     >>> config_ubi8 = loader.load('ubi8')
 
-    If the default ubi url is not defined and use_local not set, error will
+    If the default ubi url is not defined and local not set, error will
     be raised.
     ##TODO: possible ssl verification options
     """
     if not local:
         if not DEFAULT_UBI_REPO:
-            msg = 'Please either set use_local or define DEFAULT_UBI_REPO in your environment'
+            msg = 'Please either set local or define DEFAULT_UBI_REPO in your environment'
             raise ValueError(msg)
         session = requests.Session()
         repo_apis = RepoApi(DEFAULT_UBI_REPO.rstrip('/'))
