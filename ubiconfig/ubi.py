@@ -112,26 +112,27 @@ class Loader(object):
         This may load from a local file or from a remote repo, depending on the
         arguments used to initialize the ``Loader``.
         """
-        if not self.local:
-            # find the right branch from the mapping
-            branch = self.files_branch_map[file_name]
-            config_file_url = self.repo_api.get_file_content_api(file_name, branch)
-            LOG.info("Loading configuration file from remote: %s", file_name)
-            response = self.session.get(config_file_url)
-            response.raise_for_status()
-            try:
+        try:
+            if not self.local:
+                # find the right branch from the mapping
+                branch = self.files_branch_map[file_name]
+                config_file_url = self.repo_api.get_file_content_api(file_name, branch)
+                LOG.info("Loading configuration file from remote: %s", file_name)
+                response = self.session.get(config_file_url)
+                response.raise_for_status()
                 config_dict = yaml.safe_load(response.content)
-            except yaml.YAMLError:
-                LOG.error('There is syntax error in your config file %s, please fix', file_name)
-                raise
-        else:
-            if self.local_repo:
-                file_path = os.path.join(self.local_repo, file_name)
             else:
-                file_path = file_name
-            LOG.info("Loading configuration file locally: %s", file_path)
-            with open(file_path, 'r') as f:
-                config_dict = yaml.safe_load(f)
+                if self.local_repo:
+                    file_path = os.path.join(self.local_repo, file_name)
+                else:
+                    file_path = file_name
+                LOG.info("Loading configuration file locally: %s", file_path)
+                with open(file_path, 'r') as f:
+                    config_dict = yaml.safe_load(f)
+
+        except yaml.YAMLError:
+            LOG.error('There is syntax error in your config file %s, please fix', file_name)
+            raise
 
         # validate input data
         validate_config(config_dict)
