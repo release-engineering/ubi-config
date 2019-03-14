@@ -89,10 +89,11 @@ html_theme_options = {
     'github_repo': 'ubi-config',
     'github_button': False,
     'github_banner': True,
-    'description': 'A tool for loading UBI Configurations',
+    'description': 'A library for loading UBI configuration',
     'extra_nav_links': {
-        'API Reference': 'index.html',
         'Index': 'genindex.html',
+        'Source': 'https://github.com/release-engineering/ubi-config',
+        'PyPI': 'https://pypi.org/project/ubi-config',
     }
 }
 

@@ -18,10 +18,10 @@ def get_loader(local=False, local_repo=None):
     """Get a Loader instance which is used to load configurations.
 
     The default config file source is as DEFAULT_UBI_REPO/configfile.yaml,
-    when use_local is not set, it will check if the DEFAULT_UBI_REPO is set
+    when local is not set, it will check if the DEFAULT_UBI_REPO is set
     or not, then creates a requests session and pass it to Loader.
 
-    Or if use_local is set, then user can pass the local_repo address to
+    Or if local is set, then user can pass the local_repo address to
     Loader or send full path to loader.load(), for example:
 
     # use default config source
@@ -32,22 +32,22 @@ def get_loader(local=False, local_repo=None):
     >>> config_ubi8 = loader.load('ubi8')
 
     # now use local file
-    >>> loader = get_loader(use_local=True)
+    >>> loader = get_loader(local=True)
     >>> config = loader.load('full/path/to/configfile')
 
     # can pass local repo address as well
-    >>> loader = get_loader(use_local=True, local_repo='some/repo/path')
+    >>> loader = get_loader(local=True, local_repo='some/repo/path')
     >>> config = loader.load('ubi7')
     # can be reused
     >>> config_ubi8 = loader.load('ubi8')
 
-    If the default ubi url is not defined and use_local not set, error will
+    If the default ubi url is not defined and local not set, error will
     be raised.
     ##TODO: possible ssl verification options
     """
     if not local:
         if not DEFAULT_UBI_REPO:
-            msg = 'Please either set use_local or define DEFAULT_UBI_REPO in your environment'
+            msg = 'Please either set local or define DEFAULT_UBI_REPO in your environment'
             raise ValueError(msg)
         session = requests.Session()
         repo_apis = RepoApi(DEFAULT_UBI_REPO.rstrip('/'))
@@ -58,16 +58,21 @@ def get_loader(local=False, local_repo=None):
 
 
 class UbiConfig(object):
-    """Wrap all UBI related configurations
-    Examples to access different configurations:
+    """Wrap all UBI related configuration.
+
+    Examples to access different configuration elements:
+
     Modules:
-      config.modules[0].whitelist[0].name
+        - ``config.modules[0].whitelist[0].name``
+
     Packages:
-      config.packages.whitelist[0].name
-      config.packages.blacklist[0].name
+        - ``config.packages.whitelist[0].name``
+        - ``config.packages.blacklist[0].name``
+
     ContentSets:
-      config.content_sets.rpm.input
-      config.content_sets.debuginfo.output"""
+        - ``config.content_sets.rpm.input``
+        - ``config.content_sets.debuginfo.output``
+    """
     def __init__(self, cs, pkgs, mds, file_name):
         self.content_sets = cs
         self.packages = pkgs
@@ -103,19 +108,9 @@ class Loader(object):
 
     def load(self, file_name):
         """
-        Load a single configuration file and return a UbiConfig Object
-
-        Use cases:
-          Remote:
-            1. _pre_load ran in __init__, by passing the file_name to load,
-               it will find the right file in the right branch
-          Local:
-            1. called directly by user without self.local_repo specified:
-              user needs to pass the full path
-            2. called by load_all():
-              a. without defining the self.local_repo, error will be raised
-              b. or load all config files from a local_repo
-              ##TODO: make it git aware
+        Load a single configuration file and return a UbiConfig object.
+        This may load from a local file or from a remote repo, depending on the
+        arguments used to initialize the ``Loader``.
         """
         if not self.local:
             # find the right branch from the mapping
@@ -147,8 +142,8 @@ class Loader(object):
         """Get the list of config files from repo and call load on every file.
         Return a list of UbiConfig objects.
 
-        If recursive is set, it will walk through the submodules, no matter local
-        or remote
+        If recursive is set, it will walk through the submodules, for both
+        local and remote loaders.
         """
         ubi_configs = []
         # if not load from local repo, then self.files_branch_map should be loaded
