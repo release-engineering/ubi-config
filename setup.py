@@ -1,8 +1,8 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 def get_description():
-    return 'A Python Library for accessing Universal Base Image configurations'
+    return 'A Python Library for accessing Universal Base Image configuration'
 
 
 def get_long_description():
@@ -24,10 +24,7 @@ setup(
     version='0.1.0',
     author='',
     author_email='',
-    packages=['ubiconfig',
-              'ubiconfig.utils',
-              'ubiconfig.utils.api',
-              'ubiconfig.config_types'],
+    packages=find_packages(exclude=['tests', 'tests.*']),
     package_data={'ubiconfig': ['utils/config_schema.json']},
     url='https://github.com/release-engineering/ubi-config',
     license='GNU General Public License',
@@ -35,7 +32,7 @@ setup(
     long_description=get_long_description(),
     long_description_content_type='text/markdown',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
         'Programming Language :: Python :: 2',
@@ -45,4 +42,7 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     install_requires=get_requirements(),
+    project_urls={
+        'Documentation': 'https://release-engineering.github.io/ubi-config/',
+    },
 )
