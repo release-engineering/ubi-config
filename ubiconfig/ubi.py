@@ -11,7 +11,6 @@ from .utils.api.gitlab import RepoApi
 
 DEFAULT_UBI_REPO = os.getenv("DEFAULT_UBI_REPO", "")
 
-logging.basicConfig()
 LOG = logging.getLogger('ubiconfig')
 
 
