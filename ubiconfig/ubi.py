@@ -59,16 +59,21 @@ def get_loader(local=False, local_repo=None):
 
 
 class UbiConfig(object):
-    """Wrap all UBI related configurations
-    Examples to access different configurations:
+    """Wrap all UBI related configuration.
+
+    Examples to access different configuration elements:
+
     Modules:
-      config.modules[0].whitelist[0].name
+        - ``config.modules[0].whitelist[0].name``
+
     Packages:
-      config.packages.whitelist[0].name
-      config.packages.blacklist[0].name
+        - ``config.packages.whitelist[0].name``
+        - ``config.packages.blacklist[0].name``
+
     ContentSets:
-      config.content_sets.rpm.input
-      config.content_sets.debuginfo.output"""
+        - ``config.content_sets.rpm.input``
+        - ``config.content_sets.debuginfo.output``
+    """
     def __init__(self, cs, pkgs, mds, file_name):
         self.content_sets = cs
         self.packages = pkgs
@@ -104,19 +109,9 @@ class Loader(object):
 
     def load(self, file_name):
         """
-        Load a single configuration file and return a UbiConfig Object
-
-        Use cases:
-          Remote:
-            1. _pre_load ran in __init__, by passing the file_name to load,
-               it will find the right file in the right branch
-          Local:
-            1. called directly by user without self.local_repo specified:
-              user needs to pass the full path
-            2. called by load_all():
-              a. without defining the self.local_repo, error will be raised
-              b. or load all config files from a local_repo
-              ##TODO: make it git aware
+        Load a single configuration file and return a UbiConfig object.
+        This may load from a local file or from a remote repo, depending on the
+        arguments used to initialize the ``Loader``.
         """
         if not self.local:
             # find the right branch from the mapping
@@ -148,8 +143,8 @@ class Loader(object):
         """Get the list of config files from repo and call load on every file.
         Return a list of UbiConfig objects.
 
-        If recursive is set, it will walk through the submodules, no matter local
-        or remote
+        If recursive is set, it will walk through the submodules, for both
+        local and remote loaders.
         """
         ubi_configs = []
         # if not load from local repo, then self.files_branch_map should be loaded
