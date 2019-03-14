@@ -1,20 +1,15 @@
 ubi-config
 ==========
 
-A tool for loading UBI configurations
+A library for loading UBI configuration
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-- `Source <https://github.com/release-engineering/ubi-config>`_
-- `Documentation <https://release-engineering.github.io/ubi-config/>`_
-- `PyPI <https://pypi.org/project/ubi-config>`_
+.. contents::
+  :local:
 
 Quick Start
 -----------
 
-Install the ubi-config from PyPI:
+Install ubi-config from PyPI:
 
 ::
 
@@ -28,9 +23,10 @@ in your environment:
 
     export DEFAULT_UBI_REPO='https://some/url/'
 
-In your python code, simply call the function ``get_loader`` without passing any
-argument and call ``load`` on the returned object with the configuration file name
-No matter which branch is the config file in, it will load it for you.
+In your python code, simply call the function ``get_loader`` without passing
+any argument and call ``load`` on the returned object with the configuration
+file name. No matter which branch is the config file in, it will load it
+for you.
 
 .. code-block:: python
 
@@ -39,7 +35,7 @@ No matter which branch is the config file in, it will load it for you.
     default_loader = get_loader()
     config = default_loader.load("ubi7_config_file.yaml")
 
-    # the return config is an UbiConfig instance, wraps all types of UBI configurations
+    # the returned config is an UbiConfig instance, wraps all types of UBI configuration
     modules = config.modules
     module_name = modules[0].name
     print(module_name)
@@ -63,6 +59,7 @@ Except the above usage, there are some other use cases:
     configs = loader.load_all()
     # returns a list of UbiConfig objects
 
+
 2. Load configuration files from a directory by passing a local path:
 
 .. code-block:: python
@@ -78,6 +75,7 @@ Except the above usage, there are some other use cases:
 
 API Reference
 -------------
+
 .. currentmodule:: ubiconfig
 .. autofunction:: get_loader
 
