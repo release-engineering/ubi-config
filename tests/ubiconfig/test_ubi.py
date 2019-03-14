@@ -69,6 +69,17 @@ def test_load_from_local():
     assert isinstance(config, ubi.UbiConfig)
 
 
+def test_load_from_nonyaml(tmpdir):
+    somefile = tmpdir.join('some-file.txt')
+    somefile.write('[oops, this is not valid yaml')
+
+    loader = ubi.get_loader(local=True)
+
+    # The exception from failing to load this file should be propagated
+    with pytest.raises(yaml.YAMLError):
+        loader.load(str(somefile))
+
+
 def test_load_all_from_local():
     repo = os.path.join(TEST_DATA_DIR, 'configs/dnf7')
     loader = ubi.get_loader(local=True, local_repo=repo)
