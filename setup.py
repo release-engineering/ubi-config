@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 def get_description():
@@ -24,10 +24,7 @@ setup(
     version='0.1.0',
     author='',
     author_email='',
-    packages=['ubiconfig',
-              'ubiconfig.utils',
-              'ubiconfig.utils.api',
-              'ubiconfig.config_types'],
+    packages=find_packages(exclude=['tests', 'tests.*']),
     package_data={'ubiconfig': ['utils/config_schema.json']},
     url='https://github.com/release-engineering/ubi-config',
     license='GNU General Public License',
