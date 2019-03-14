@@ -1,12 +1,9 @@
 import os
 import logging
 
-import yaml
-import requests
+from six.moves.urllib.parse import urlparse
 
-from .config_types import content_sets, packages, modules
-from .utils.config_validation import validate_config
-from .utils.api.gitlab import RepoApi
+from ._impl.loaders import LocalLoader, GitlabLoader
 
 
 DEFAULT_UBI_REPO = os.getenv("DEFAULT_UBI_REPO", "")
@@ -14,193 +11,57 @@ DEFAULT_UBI_REPO = os.getenv("DEFAULT_UBI_REPO", "")
 LOG = logging.getLogger('ubiconfig')
 
 
-def get_loader(local=False, local_repo=None):
+class LoaderError(RuntimeError):
+    pass
+
+
+def get_loader(source=None):
     """Get a Loader instance which is used to load configurations.
 
-    The default config file source is as DEFAULT_UBI_REPO/configfile.yaml,
-    when local is not set, it will check if the DEFAULT_UBI_REPO is set
-    or not, then creates a requests session and pass it to Loader.
+    ``source`` should be provided as one of the following:
 
-    Or if local is set, then user can pass the local_repo address to
-    Loader or send full path to loader.load(), for example:
+        URL
+            A URL of a remote git repo containing UBI config files.
+            Currently, only Gitlab is supported.
 
-    # use default config source
-    >>> loader = get_loader()
-    >>> config_ubi7 = loader.load('ubi7')
-    >>> config)ubi7.content_sets.rpm.input
-    # loader can be used repeatedly
-    >>> config_ubi8 = loader.load('ubi8')
+        local path
+            A path to a local directory containing UBI config files.
 
-    # now use local file
-    >>> loader = get_loader(local=True)
-    >>> config = loader.load('full/path/to/configfile')
+        :any:`None`
+            If none/omitted, the value of the ``DEFAULT_UBI_REPO``
+            environment variable is used. If this is unset, an
+            exception is raised.
 
-    # can pass local repo address as well
-    >>> loader = get_loader(local=True, local_repo='some/repo/path')
-    >>> config = loader.load('ubi7')
-    # can be reused
-    >>> config_ubi8 = loader.load('ubi8')
+    After the loader is constructed, it can be used to load config files
+    when given relative paths to config files.
 
-    If the default ubi url is not defined and local not set, error will
-    be raised.
-    ##TODO: possible ssl verification options
+    .. code-block:: python
+
+        # use default config source
+        >>> loader = get_loader()
+        >>> config_ubi7 = loader.load('ubi7.yaml')
+        >>> config_ubi7.content_sets.rpm.input
+        # loader can be used repeatedly
+        >>> config_ubi8 = loader.load('ubi8.yaml')
+
+        # or use a local directory
+        >>> loader = get_loader('/my/config/dir)
+        >>> config = loader.load('path/to/configfile.yaml')
     """
-    if not local:
-        if not DEFAULT_UBI_REPO:
-            msg = 'Please either set local or define DEFAULT_UBI_REPO in your environment'
-            raise ValueError(msg)
-        session = requests.Session()
-        repo_apis = RepoApi(DEFAULT_UBI_REPO.rstrip('/'))
-        session.get(repo_apis.api_url)
-        return Loader(session=session, repo_api=repo_apis)
-    else:
-        return Loader(local=True, local_repo=local_repo)
+    if not source:
+        source = DEFAULT_UBI_REPO
 
+    if not source:
+        msg = 'Please either set a source or define DEFAULT_UBI_REPO in your environment'
+        raise LoaderError(msg)
 
-class UbiConfig(object):
-    """Wrap all UBI related configuration.
+    parsed = urlparse(source)
+    if parsed.netloc:
+        # It's a URL, use the gitlab loader
+        return GitlabLoader(source)
 
-    Examples to access different configuration elements:
+    # It should be a local path
+    if not os.path.isdir(source):
+        raise LoaderError("'%s' is not an existing directory" % source)
 
-    Modules:
-        - ``config.modules[0].whitelist[0].name``
-
-    Packages:
-        - ``config.packages.whitelist[0].name``
-        - ``config.packages.blacklist[0].name``
-
-    ContentSets:
-        - ``config.content_sets.rpm.input``
-        - ``config.content_sets.debuginfo.output``
-    """
-    def __init__(self, cs, pkgs, mds, file_name):
-        self.content_sets = cs
-        self.packages = pkgs
-        self.modules = mds
-        self.file_name = file_name
-
-    def __repr__(self):
-        return self.file_name
-
-    @classmethod
-    def load_from_dict(cls, data, file_name):
-        m_data = modules.Modules.load_from_dict(data.get('modules', {}))
-        pkgs = data.get('packages', {})
-        pkgs_data = packages.Packages(pkgs.get('include', []),
-                                      pkgs.get('exclude', []),
-                                      data.get('arches', []))
-        cs_map = content_sets.ContentSetsMapping.load_from_dict(data['content_sets'])
-        # use the simplified file name
-        file_name = file_name.split('/')[-1]
-
-        return cls(cs=cs_map, pkgs=pkgs_data, mds=m_data, file_name=file_name)
-
-
-class Loader(object):
-    """Load configuration from default repo or from local file."""
-    def __init__(self, session=None, repo_api=None, local=False, local_repo=None):
-        self.session = session
-        self.repo_api = repo_api
-        self.local = local
-        self.local_repo = local_repo
-        if not self.local:
-            self.files_branch_map = self._pre_load()
-
-    def load(self, file_name):
-        """
-        Load a single configuration file and return a UbiConfig object.
-        This may load from a local file or from a remote repo, depending on the
-        arguments used to initialize the ``Loader``.
-        """
-        try:
-            if not self.local:
-                # find the right branch from the mapping
-                branch = self.files_branch_map[file_name]
-                config_file_url = self.repo_api.get_file_content_api(file_name, branch)
-                LOG.info("Loading configuration file from remote: %s", file_name)
-                response = self.session.get(config_file_url)
-                response.raise_for_status()
-                config_dict = yaml.safe_load(response.content)
-            else:
-                if self.local_repo:
-                    file_path = os.path.join(self.local_repo, file_name)
-                else:
-                    file_path = file_name
-                LOG.info("Loading configuration file locally: %s", file_path)
-                with open(file_path, 'r') as f:
-                    config_dict = yaml.safe_load(f)
-
-        except yaml.YAMLError:
-            LOG.error('There is syntax error in your config file %s, please fix', file_name)
-            raise
-
-        # validate input data
-        validate_config(config_dict)
-
-        return UbiConfig.load_from_dict(config_dict, file_name)
-
-    def load_all(self, recursive=False):
-        """Get the list of config files from repo and call load on every file.
-        Return a list of UbiConfig objects.
-
-        If recursive is set, it will walk through the submodules, for both
-        local and remote loaders.
-        """
-        ubi_configs = []
-        # if not load from local repo, then self.files_branch_map should be loaded
-        if not self.local:
-            for file in self.files_branch_map:
-                LOG.debug("Now loading %s from branch %s", file, self.files_branch_map[file])
-                ubi_configs.append(self.load(file))
-        else:
-            file_list = self._get_local_file_list(recursive)
-            for file in file_list:
-                LOG.debug("Now loading %s", file)
-                ubi_configs.append(self.load(file))
-
-        return ubi_configs
-
-    def _get_local_file_list(self, recursive=False):
-        """
-        Get the config file list from local. If recusive is set, then it would walk
-        through the sub-modules.
-        """
-        LOG.info('Getting the local config file list')
-        if self.local_repo is None:
-            raise RuntimeError('You need to set local repo to load all files')
-        file_list = []
-        if recursive:
-            for root, _, files in os.walk(self.local_repo):
-                files = [os.path.join(root, f) for f in files if f.endswith(('.yaml', '.yml'))]
-                file_list.extend(files)
-        else:
-            file_list = [file for file in os.listdir(self.local_repo)
-                         if file.endswith(('yaml', '.yml'))]
-
-        return file_list
-
-    def _pre_load(self, recursive=False):
-        """Iterate all branches to get a mapping of {file_path: branch,...}
-        """
-        files_branch_map = {}
-        branches = self._get_branches()
-        LOG.info("Loading config files from all branches: %s", branches)
-        for branch in branches:
-            file_list_api = self.repo_api.get_file_list_api(branch=branch,
-                                                            recursive=recursive)
-            json_response = self.session.get(file_list_api).json()
-            file_list = [file['path'] for file in json_response
-                         if file['name'].endswith(('.yaml', '.yml'))]
-            for file in file_list:
-                files_branch_map[file] = branch
-        return files_branch_map
-
-    def _get_branches(self):
-        """Get all the branches of a given repo"""
-        LOG.info("Getting branches of the repo")
-        branches_list_api = self.repo_api.get_branch_list_api()
-        json_response = self.session.get(branches_list_api).json()
-        if not json_response:
-            raise RuntimeError('Please check your DEFAULT_UBI_REPO is in right format')
-        branches = [b['name'] for b in json_response]
-        return branches
+    return LocalLoader(source)
