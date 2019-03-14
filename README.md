@@ -29,7 +29,7 @@ name to `get_loader().load()`
 ```python
 from ubiconfig import get_loader
 
-config = get_loader().load('enterprise-linux-server-x86_64')
+config = get_loader().load('enterprise-linux-server-x86_64.yaml')
 # config has been validated and is now a Python object with relevant properties
 package_whitelist = config.packages.whitelist
 print(package_whitelist)
@@ -50,7 +50,7 @@ Or, user can also load the config from local file:
 ```python
 from ubiconfig import get_loader
 
-config = get_loader(local=True).load('/path/to/enterprise-linux-server-x86_64.yaml')
+config = get_loader("/my/config/dir").load('enterprise-linux-server-x86_64.yaml')
 ```
 
 License
