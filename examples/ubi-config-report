@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+"""This example shows basic loading of UBI configuration:
+
+- Loads all config from the config source passed on the command-line (or the default)
+- Prints a basic report on the config found, mappings, package counts etc.
+"""
+from argparse import ArgumentParser
+
+from ubiconfig import get_loader
+
+
+def do_report(source):
+    loader = get_loader(source)
+
+    all_configs = loader.load_all(recursive=True)
+    all_configs.sort(key=lambda config: config.file_name)
+
+    print("Found %d UBI configuration files" % len(all_configs))
+
+    for config in all_configs:
+        print("")
+        print("  %s:" % config.file_name)
+
+        cs = config.content_sets
+
+        if cs.rpm.input:
+            print("    RPMs:\t%s => %s" % (cs.rpm.input, cs.rpm.output))
+        else:
+            # There's always expected to be some RPM mapping
+            print("    (no RPM mapping defined?)")
+
+        if cs.srpm.input:
+            print("    SRPMs:\t%s => %s" % (cs.srpm.input, cs.srpm.output))
+
+        if cs.debuginfo.input:
+            print("    debuginfo:\t%s => %s" % (cs.debuginfo.input, cs.debuginfo.output))
+
+        if config.modules.whitelist:
+            print("    modules:\t%d included" % len(config.modules.whitelist))
+
+        pkgs = config.packages
+        pkgs_len = (len(pkgs.whitelist), len(pkgs.blacklist))
+        print("    packages:\t%d included, %d excluded" % pkgs_len)
+
+
+def main():
+    parser = ArgumentParser(
+        description="Report available UBI config")
+    parser.add_argument('--source', help="Read UBI config from this location (URL or path)")
+    args = parser.parse_args()
+
+    do_report(args.source)
+
+
+if __name__ == '__main__':
+    main()
