@@ -25,7 +25,7 @@ def test_bad_yaml():
             Mock(content='[oops not yaml'),
         ]
 
-        loader = GitlabLoader('https://some-repo.example.com/foo/bar')
+        loader = GitlabLoader('https://some-repo.example.com/foo/bar', per_page=30)
 
         # It should propagate the YAML load exception
         with pytest.raises(yaml.YAMLError):

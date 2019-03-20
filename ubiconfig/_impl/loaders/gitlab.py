@@ -13,11 +13,11 @@ LOG = logging.getLogger('ubiconfig')
 
 class GitlabLoader(Loader):
     """Load configuration from a remote repo on gitlab."""
-    def __init__(self, url):
+    def __init__(self, url, per_page):
         self._url = url
         self._session = requests.Session()
         self._repo_api = RepoApi(self._url.rstrip('/'))
-        self._files_branch_map = self._pre_load()
+        self._files_branch_map = self._pre_load(per_page)
 
     def load(self, file_name):
         # find the right branch from the mapping
@@ -47,7 +47,7 @@ class GitlabLoader(Loader):
 
         return ubi_configs
 
-    def _pre_load(self, recursive=False):
+    def _pre_load(self, per_page):
         """Iterate all branches to get a mapping of {file_path: branch,...}
         """
         files_branch_map = {}
@@ -55,7 +55,7 @@ class GitlabLoader(Loader):
         LOG.info("Loading config files from all branches: %s", branches)
         for branch in branches:
             file_list_api = self._repo_api.get_file_list_api(branch=branch,
-                                                             recursive=recursive)
+                                                             per_page=per_page)
             json_response = self._session.get(file_list_api).json()
             file_list = [file['path'] for file in json_response
                          if file['name'].endswith(('.yaml', '.yml'))]

@@ -15,7 +15,7 @@ class LoaderError(RuntimeError):
     pass
 
 
-def get_loader(source=None):
+def get_loader(source=None, per_page=30):
     """Get a Loader instance which is used to load configurations.
 
     ``source`` should be provided as one of the following:
@@ -31,6 +31,10 @@ def get_loader(source=None):
             If none/omitted, the value of the ``DEFAULT_UBI_REPO``
             environment variable is used. If this is unset, an
             exception is raised.
+
+    ``per_page`` specifies the maximum number of files returned by load_all(),
+    and it's defaulted to 30.
+    It's only functional when load from remote repo
 
     After the loader is constructed, it can be used to load config files
     when given relative paths to config files.
@@ -58,7 +62,7 @@ def get_loader(source=None):
     parsed = urlparse(source)
     if parsed.netloc:
         # It's a URL, use the gitlab loader
-        return GitlabLoader(source)
+        return GitlabLoader(source, per_page)
 
     # It should be a local path
     if not os.path.isdir(source):
