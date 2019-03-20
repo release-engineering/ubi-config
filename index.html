@@ -103,7 +103,7 @@ for you.</p>
 <h2><a class="toc-backref" href="#id3">API Reference</a><a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="ubiconfig.get_loader">
-<code class="descclassname">ubiconfig.</code><code class="descname">get_loader</code><span class="sig-paren">(</span><em>source=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.get_loader" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">ubiconfig.</code><code class="descname">get_loader</code><span class="sig-paren">(</span><em>source=None</em>, <em>per_page=30</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.get_loader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a Loader instance which is used to load configurations.</p>
 <p><code class="docutils literal notranslate"><span class="pre">source</span></code> should be provided as one of the following:</p>
 <blockquote>
@@ -119,6 +119,9 @@ environment variable is used. If this is unset, an
 exception is raised.</dd>
 </dl>
 </div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">per_page</span></code> specifies the maximum number of files returned by load_all(),
+and it’s defaulted to 30.
+It’s only functional when load from remote repo</p>
 <p>After the loader is constructed, it can be used to load config files
 when given relative paths to config files.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># use default config source</span>
