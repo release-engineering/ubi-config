@@ -70,5 +70,5 @@ class GitlabLoader(Loader):
         json_response = self._session.get(branches_list_api).json()
         if not json_response:
             raise RuntimeError('Please check %s is in right format' % self._url)
-        branches = [b['name'] for b in json_response]
+        branches = [b['commit']['id'] for b in json_response]
         return branches
