@@ -16,7 +16,8 @@ def test_bad_yaml():
         session = mock_session_class.return_value
         session.get.side_effect = [
             # branches
-            mock_json([{'name': 'master'}]),
+            mock_json([{'name': 'master',
+                        'commit': {'id': '2189cbc2e447f796fe354f8d784d76b0a2620248'}}]),
 
             # files
             mock_json([{'name': 'badfile.yaml', 'path': 'badfile.yaml'}]),

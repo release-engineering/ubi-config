@@ -34,8 +34,8 @@ def ubi7_config_file():
 
 @pytest.fixture
 def files_branch_map():
-    return {'rhel-atomic-host.yaml': 'dnf7',
-            'rhel-7-for-power-le.yaml': 'ubi7'}
+    return {'rhel-atomic-host.yaml': 'c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f',
+            'rhel-7-for-power-le.yaml': '2189cbc2e447f796fe354f8d784d76b0a2620248'}
 
 
 @pytest.fixture
@@ -140,18 +140,22 @@ def test_get_empty_branches(mocked_session):
 
 @patch('requests.Session')
 def test_get_branches(mocked_session):
-    branches = [{'name': 'dnf7', 'default': True, 'can_push': True},
-                {'name': 'ubi7', 'default': False, 'can_push': True}]
+    branches = [{'name': 'dnf7',
+                 'commit': {'id': 'c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f'}},
+                {'name': 'ubi7',
+                 'commit': {'id': '2189cbc2e447f796fe354f8d784d76b0a2620248'}}]
     mocked_session.return_value.get.return_value.json.return_value = branches
     loader = ubi.get_loader()
     actual_branches = loader._get_branches()
-    assert actual_branches == ['dnf7', 'ubi7']
+    assert actual_branches == ['c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f',
+                               '2189cbc2e447f796fe354f8d784d76b0a2620248']
 
 
 @patch('requests.Session')
 @patch('ubiconfig._impl.loaders.GitlabLoader._get_branches')
 def test_pre_load(mocked_get_branches, mocked_session, files_branch_map):
-    branches = ['dnf7', 'ubi7']
+    branches = ['c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f',
+                '2189cbc2e447f796fe354f8d784d76b0a2620248']
     mocked_get_branches.return_value = branches
     file_list = [[{'name': 'rhel-atomic-host.yaml', 'path': 'rhel-atomic-host.yaml'},
                   {'name': 'README.md', 'path': 'README.md'}],
