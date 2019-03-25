@@ -13,11 +13,11 @@ LOG = logging.getLogger('ubiconfig')
 
 class GitlabLoader(Loader):
     """Load configuration from a remote repo on gitlab."""
-    def __init__(self, url, per_page):
+    def __init__(self, url):
         self._url = url
         self._session = requests.Session()
         self._repo_api = RepoApi(self._url.rstrip('/'))
-        self._files_branch_map = self._pre_load(per_page)
+        self._files_branch_map = self._pre_load()
 
     def load(self, file_name):
         # find the right branch from the mapping
@@ -47,20 +47,25 @@ class GitlabLoader(Loader):
 
         return ubi_configs
 
-    def _pre_load(self, per_page):
+    def _pre_load(self):
         """Iterate all branches to get a mapping of {file_path: branch,...}
         """
         files_branch_map = {}
         branches = self._get_branches()
         LOG.info("Loading config files from all branches: %s", branches)
         for branch in branches:
-            file_list_api = self._repo_api.get_file_list_api(branch=branch,
-                                                             per_page=per_page)
-            json_response = self._session.get(file_list_api).json()
-            file_list = [file['path'] for file in json_response
-                         if file['name'].endswith(('.yaml', '.yml'))]
-            for file in file_list:
-                files_branch_map[file] = branch
+            page = 1
+            while True:
+                file_list_api = self._repo_api.get_file_list_api(branch=branch,
+                                                                 page=page)
+                response = self._session.get(file_list_api)
+                file_list = [file['path'] for file in response.json()
+                             if file['name'].endswith(('.yaml', '.yml'))]
+                for file in file_list:
+                    files_branch_map[file] = branch
+                if page >= int(response.headers.get('X-Total-Pages', 1)):
+                    break
+                page += 1
         return files_branch_map
 
     def _get_branches(self):

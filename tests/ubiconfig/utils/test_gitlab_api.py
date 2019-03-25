@@ -24,8 +24,8 @@ def test_get_branch_list_api(v4_repo_api, v4_api_prefix):
 
 
 def test_get_file_list_api(v4_repo_api, v4_api_prefix):
-    expected_file_list_api = urljoin(v4_api_prefix, 'repository/tree?ref=master&per_page=30')
-    v4_repo_api.get_file_list_api() == expected_file_list_api
+    expected_file_list_api = urljoin(v4_api_prefix, 'repository/tree?ref=master&page=1')
+    v4_repo_api.get_file_list_api(page=1) == expected_file_list_api
 
 
 def test_file_content_api(v4_repo_api, v4_api_prefix):
