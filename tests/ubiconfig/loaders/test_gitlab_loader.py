@@ -5,9 +5,11 @@ import yaml
 from ubiconfig._impl.loaders import GitlabLoader
 
 
-def mock_json(value):
+def mock_json(value, headers=None):
     out = MagicMock()
     out.json.return_value = value
+    if headers:
+        out.headers = headers
     return out
 
 
@@ -19,14 +21,17 @@ def test_bad_yaml():
             mock_json([{'name': 'master',
                         'commit': {'id': '2189cbc2e447f796fe354f8d784d76b0a2620248'}}]),
 
-            # files
-            mock_json([{'name': 'badfile.yaml', 'path': 'badfile.yaml'}]),
+            # files and headers
+            mock_json([{'name': 'badfile.yaml', 'path': 'badfile.yaml'}],
+                      {'Content-Length': '629', 'X-Total-Pages': '2', 'X-Per-Page': '20'}),
+
+            mock_json([{'name': 'badfile1.yaml', 'path': 'badfile1.yaml'}],
+                      {'Content-Length': '629', 'X-Total-Pages': '2', 'X-Per-Page': '20'}),
 
             # content (not valid yaml!)
             Mock(content='[oops not yaml'),
         ]
-
-        loader = GitlabLoader('https://some-repo.example.com/foo/bar', per_page=30)
+        loader = GitlabLoader('https://some-repo.example.com/foo/bar')
 
         # It should propagate the YAML load exception
         with pytest.raises(yaml.YAMLError):

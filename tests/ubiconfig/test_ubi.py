@@ -144,6 +144,8 @@ def test_get_branches(mocked_session):
                  'commit': {'id': 'c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f'}},
                 {'name': 'ubi7',
                  'commit': {'id': '2189cbc2e447f796fe354f8d784d76b0a2620248'}}]
+    headers = {'Content-Length': '629', 'X-Total-Pages': '1', 'X-Per-Page': '20'}
+    mocked_session.return_value.get.return_value.headers = headers
     mocked_session.return_value.get.return_value.json.return_value = branches
     loader = ubi.get_loader()
     actual_branches = loader._get_branches()
@@ -157,6 +159,8 @@ def test_pre_load(mocked_get_branches, mocked_session, files_branch_map):
     branches = ['c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f',
                 '2189cbc2e447f796fe354f8d784d76b0a2620248']
     mocked_get_branches.return_value = branches
+    headers = {'Content-Length': '629', 'X-Total-Pages': '1', 'X-Per-Page': '20'}
+    mocked_session.return_value.get.return_value.headers = headers
     file_list = [[{'name': 'rhel-atomic-host.yaml', 'path': 'rhel-atomic-host.yaml'},
                   {'name': 'README.md', 'path': 'README.md'}],
                  [{'name': 'rhel-7-for-power-le.yaml', 'path': 'rhel-7-for-power-le.yaml'}]]
