@@ -21,7 +21,7 @@ def get_requirements():
 
 setup(
     name='ubi-config',
-    version='0.2.1',
+    version='1.0.0',
     author='',
     author_email='',
     packages=find_packages(exclude=['tests', 'tests.*']),
