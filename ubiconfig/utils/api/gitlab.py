@@ -41,7 +41,6 @@ or set GIT_LAB_URL_FMT by yourself")
     def get_file_list_api(self, page, branch=None):
         """Return the api used to get the list of files in the repo or files
         in the sub-module.
-        The defualt maximum number of return files is 30
         """
         branch = branch.replace('/', '%2F') if branch else 'master'
         return urljoin(self.api_url, 'repository/tree?ref=%s&page=%s' % (branch, page))
