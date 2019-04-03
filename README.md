@@ -5,6 +5,7 @@ A Python library for accessing Universal Base Image configuration
 
 [![Build Status](https://travis-ci.org/release-engineering/ubi-config.svg?branch=master)](https://travis-ci.org/release-engineering/ubi-config)
 [![Coverage Status](https://coveralls.io/repos/github/release-engineering/ubi-config/badge.svg?branch=master)](https://coveralls.io/github/release-engineering/ubi-config?branch=master)
+[![Maintainability](https://api.codeclimate.com/v1/badges/c62407f84ad66135fa8d/maintainability)](https://codeclimate.com/github/release-engineering/ubi-config/maintainability)
 
 - [Source](https://github.com/release-engineering/ubi-config)
 - [Documentation](https://release-engineering.github.io/ubi-config/)
