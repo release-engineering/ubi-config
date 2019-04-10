@@ -8,49 +8,62 @@
                 "input": {"type": "string"},
                 "output": {"type": "string"}
                 },
+            "additionalProperties": false,
             "required": ["input", "output"]
             },
         "module": {
             "type": "object",
             "properties": {
                 "name": {"type": "string"},
-                "stream": {"type": "number"},
+                "stream": {"type": ["string", "number"]},
                 "profiles":{"type": "array",
                             "items": {"type": "string"}
                         }
                 },
+            "additionalProperties": false,
             "required": ["name", "stream"]
             }
     },
-    "content_sets": {
-        "debuginfo": {"$ref": "#/definitions/content_sets_base"},
-        "rpm": {"$ref": "#/definitions/content_sets_base"},
-        "srpm": {"$ref": "#/definitions/content_sets_base"}
-    },
-    "arches": {
-        "type": "array",
-        "items": {"type": "string"}
-    },
-    "modules": {
-        "type": "object",
-        "properties": {
-            "include": {
-                "type": "array",
-                "items":{"$ref": "#/definitions/module"}
-                }
+    "properties":{
+        "content_sets": {
+            "type": "object",
+            "properties":{
+                "debuginfo": {"$ref": "#/definitions/content_sets_base"},
+                "rpm": {"$ref": "#/definitions/content_sets_base"},
+                "srpm": {"$ref": "#/definitions/content_sets_base"}
+            },
+            "additionalProperties": false
+        },
+        "arches": {
+            "type": "array",
+            "items": {"type": "string"}
+        },
+        "modules": {
+            "type": "object",
+            "properties": {
+                "include": {
+                    "type": "array",
+                    "items":{"$ref": "#/definitions/module"}
+                    }
+                },
+            "additionalProperties": false
+            },
+        "packages": {
+            "type": "object",
+            "properties": {
+                "include": {
+                    "type": "array",
+                    "items": {"type":"string"}
+                    },
+                "exclude": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                    }
+                },
+            "additionalProperties": false,
+            "required": ["include"]
             }
         },
-    "packages": {
-        "type": "object",
-        "properties": {
-            "include": {
-                "type": "array",
-                "items": {"type":"string"}
-                },
-            "exclude": {
-                "type": "array",
-                "items": {"type": "string"}
-                }
-            }
-        }
+    "additionalProperties": false,
+    "required": ["content_sets", "packages"]
 }
