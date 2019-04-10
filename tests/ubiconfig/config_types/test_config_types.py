@@ -18,10 +18,10 @@ def test_pack_with_dot():
     pkg = packages.Package(pkg_info, arches)
     assert pkg.name == 'python2.7'
     assert pkg.arch is None
-    assert repr(pkg) == 'python2.7'
+    assert repr(pkg) == '<Package: python2.7>'
 
 
-def test_while_list_package():
+def test_white_list_package():
     """If it's a whilelist package, then the format <name>*.<arch> is not allowed
     """
     pkg_info = 'kernel*'
@@ -56,7 +56,7 @@ def test_modules():
     assert md[0].stream == '8'
     assert md[0].profiles == ['interpreter']
     assert md[1].stream == '10'
-    assert repr(md[1]) == 'nodejs'
+    assert repr(md[1]) == '<Module: nodejs>'
 
 
 def test_content_sets():

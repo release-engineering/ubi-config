@@ -9,7 +9,7 @@ class Module(object):
         self.profiles = profiles
 
     def __repr__(self):
-        return self.name
+        return '<Module: %s>' % self.name
 
 
 class Modules(object):

@@ -13,7 +13,7 @@ class Package(object):
             self.arch = None
 
     def __repr__(self):
-        return self.package
+        return "<Package: %s>" % self.package
 
 
 class IncludePackage(Package):

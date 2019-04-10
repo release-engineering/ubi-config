@@ -176,4 +176,4 @@ def test_ubi_config(dnf7_config_file):
     config = UbiConfig.load_from_dict(config_dict, 'rhel-atomic-host.yaml')
     assert config.modules[0].name == 'nodejs'
     assert config.content_sets.rpm.input == 'rhel-atomic-host-rpms'
-    assert str(config.packages.blacklist[0]) == 'kernel*'
+    assert str(config.packages.blacklist[0]) == '<Package: kernel*>'
