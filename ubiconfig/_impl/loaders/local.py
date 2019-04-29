@@ -2,6 +2,7 @@ import logging
 import os
 
 import yaml
+from jsonschema.exceptions import ValidationError
 
 from ubiconfig.utils.config_validation import validate_config
 from ubiconfig.config_types import UbiConfig
@@ -28,7 +29,11 @@ class LocalLoader(object):
             raise
 
         # validate input data
-        validate_config(config_dict)
+        try:
+            validate_config(config_dict)
+        except ValidationError as e:
+            LOG.error("%s FAILED schema validation:\n%s\nSkip for now", file_name, e)
+            return
 
         return UbiConfig.load_from_dict(config_dict, file_name)
 
@@ -38,7 +43,9 @@ class LocalLoader(object):
         file_list = self._get_local_file_list(recursive)
         for file in file_list:
             LOG.debug("Now loading %s", file)
-            ubi_configs.append(self.load(file))
+            config = self.load(file)
+            if config:
+                ubi_configs.append(config)
 
         return ubi_configs
 

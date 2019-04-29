@@ -2,6 +2,8 @@ import logging
 import yaml
 import requests
 
+from jsonschema.exceptions import ValidationError
+
 from ubiconfig.utils.api.gitlab import RepoApi
 from ubiconfig.utils.config_validation import validate_config
 from ubiconfig.config_types import UbiConfig
@@ -35,7 +37,11 @@ class GitlabLoader(Loader):
             raise
 
         # validate input data
-        validate_config(config_dict)
+        try:
+            validate_config(config_dict)
+        except ValidationError as e:
+            LOG.error("%s FAILED schema validation:\n%s\nSkip for now", file_name, e)
+            return
 
         return UbiConfig.load_from_dict(config_dict, file_name)
 
@@ -43,7 +49,9 @@ class GitlabLoader(Loader):
         ubi_configs = []
         for file in self._files_branch_map:
             LOG.debug("Now loading %s from branch %s", file, self._files_branch_map[file])
-            ubi_configs.append(self.load(file))
+            config = self.load(file)
+            if config:
+                ubi_configs.append(config)
 
         return ubi_configs
 
