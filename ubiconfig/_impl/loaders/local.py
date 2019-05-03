@@ -23,14 +23,11 @@ class LocalLoader(object):
         try:
             with open(file_path, 'r') as f:
                 config_dict = yaml.safe_load(f)
-
-        except yaml.YAMLError:
-            LOG.error('There is syntax error in your config file %s, please fix', file_name)
-            raise
-
-        # validate input data
-        try:
+            # validate input data
             validate_config(config_dict)
+        except yaml.YAMLError:
+            LOG.error("%s FAILED loading because of Syntax error, Skip for now", file_name)
+            return
         except ValidationError as e:
             LOG.error("%s FAILED schema validation:\n%s\nSkip for now", file_name, e)
             return

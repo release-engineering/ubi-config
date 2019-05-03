@@ -101,9 +101,7 @@ def test_load_from_nonyaml(tmpdir):
 
     loader = ubi.get_loader(str(tmpdir))
 
-    # The exception from failing to load this file should be propagated
-    with pytest.raises(yaml.YAMLError):
-        loader.load('some-file.txt')
+    assert loader.load('some-file.txt') is None
 
 
 def test_load_local_failed_validation():
@@ -127,15 +125,6 @@ def test_load_all_from_local_recursive():
     configs = loader.load_all(recursive=True)
     assert len(configs) == 2
     assert isinstance(configs[0], UbiConfig)
-
-
-def test_syntax_error_from_config_file():
-    loader = ubi.get_loader(TEST_DATA_DIR)
-    try:
-        loader.load('bad_configs/syntax_error.yaml')
-        raise AssertionError('load should fail!')
-    except yaml.YAMLError as e:
-        assert e.problem == "expected <block end>, but found '?'"
 
 
 def test_get_loader_notexist(tmpdir):
