@@ -3,6 +3,7 @@ import os
 import pytest
 from mock import patch
 import yaml
+from jsonschema.exceptions import ValidationError
 
 from ubiconfig import ubi, UbiConfig
 
@@ -39,14 +40,21 @@ def invalid_config_file():
 
 
 @pytest.fixture
+def syntax_error_file():
+    with open(os.path.join(TEST_DATA_DIR, 'bad_configs/syntax_error.yaml')) as f:
+        yield f
+
+
+@pytest.fixture
 def files_branch_map():
     return {'rhel-atomic-host.yaml': 'c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f',
             'rhel-7-for-power-le.yaml': '2189cbc2e447f796fe354f8d784d76b0a2620248'}
 
 
 @pytest.fixture
-def files_branch_map_with_invalid_config_file(files_branch_map):
-    result_map = {'invaild_config.yaml': 'c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f'}
+def files_branch_map_with_error_config_file(files_branch_map):
+    result_map = {'invaild_config.yaml': 'c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f',
+                  'syntax_error.yaml': 'c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f'}
     result_map.update(files_branch_map)
     return result_map
 
@@ -75,16 +83,18 @@ def test_load_all_from_default_repo(mocked_pre_load, mocked_session, files_branc
 
 @patch('requests.Session')
 @patch('ubiconfig._impl.loaders.GitlabLoader._pre_load')
-def test_load_all_with_invalid_config(mocked_pre_load, mocked_session, dnf7_config_file,
-                                      ubi7_config_file, invalid_config_file, response,
-                                      files_branch_map_with_invalid_config_file):
-    mocked_pre_load.return_value = files_branch_map_with_invalid_config_file
+def test_load_all_with_error_config(mocked_pre_load, mocked_session, dnf7_config_file,
+                                    ubi7_config_file, invalid_config_file, syntax_error_file,
+                                    response, files_branch_map_with_error_config_file):
+    mocked_pre_load.return_value = files_branch_map_with_error_config_file
     mocked_session.return_value.get.side_effect = [response(dnf7_config_file),
                                                    response(ubi7_config_file),
-                                                   response(invalid_config_file)]
+                                                   response(invalid_config_file),
+                                                   response(syntax_error_file)]
+
     loader = ubi.get_loader()
     configs = loader.load_all()
-    assert mocked_session.return_value.get.call_count == 3
+    assert mocked_session.return_value.get.call_count == 4
     assert len(configs) == 2
 
 
@@ -101,14 +111,15 @@ def test_load_from_nonyaml(tmpdir):
 
     loader = ubi.get_loader(str(tmpdir))
 
-    assert loader.load('some-file.txt') is None
+    with pytest.raises(yaml.YAMLError):
+        loader.load('some-file.txt')
 
 
 def test_load_local_failed_validation():
     loader = ubi.get_loader(TEST_DATA_DIR)
-    config = loader.load('bad_configs/invalid_config.yaml')
 
-    assert config is None
+    with pytest.raises(ValidationError):
+        loader.load('bad_configs/invalid_config.yaml')
 
 
 def test_load_all_from_local():
@@ -117,6 +128,13 @@ def test_load_all_from_local():
     configs = loader.load_all()
     assert len(configs) == 1
     assert isinstance(configs[0], UbiConfig)
+
+
+def test_load_all_from_local_with_error_configs():
+    loader = ubi.get_loader(TEST_DATA_DIR)
+    configs = loader.load_all(recursive=True)
+
+    assert len(configs) == 2
 
 
 def test_load_all_from_local_recursive():

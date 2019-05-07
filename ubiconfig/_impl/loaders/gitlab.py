@@ -30,16 +30,9 @@ class GitlabLoader(Loader):
         response = self._session.get(config_file_url)
         response.raise_for_status()
 
-        try:
-            config_dict = yaml.safe_load(response.content)
-            # validate input data
-            validate_config(config_dict)
-        except yaml.YAMLError:
-            LOG.error("%s FAILED loading because of Syntax error, Skip for now", file_name)
-            return
-        except ValidationError as e:
-            LOG.error("%s FAILED schema validation:\n%s\nSkip for now", file_name, e)
-            return
+        config_dict = yaml.safe_load(response.content)
+        # validate input data
+        validate_config(config_dict)
 
         return UbiConfig.load_from_dict(config_dict, file_name)
 
@@ -47,9 +40,14 @@ class GitlabLoader(Loader):
         ubi_configs = []
         for file in self._files_branch_map:
             LOG.debug("Now loading %s from branch %s", file, self._files_branch_map[file])
-            config = self.load(file)
-            if config:
-                ubi_configs.append(config)
+            try:
+                ubi_configs.append(self.load(file))
+            except yaml.YAMLError:
+                LOG.error("%s FAILED loading because of Syntax error, Skip for now", file)
+                continue
+            except ValidationError as e:
+                LOG.error("%s FAILED schema validation:\n%s\nSkip for now", file, e)
+                continue
 
         return ubi_configs
 

@@ -1,4 +1,6 @@
 from mock import patch, MagicMock, Mock
+import pytest
+import yaml
 
 from ubiconfig._impl.loaders import GitlabLoader
 
@@ -31,5 +33,6 @@ def test_bad_yaml():
         ]
         loader = GitlabLoader('https://some-repo.example.com/foo/bar')
 
-        # None is returned since no file's loaded
-        assert loader.load('badfile.yaml') is None
+        # It should propagate the YAML load exception
+        with pytest.raises(yaml.YAMLError):
+            loader.load('badfile.yaml')
