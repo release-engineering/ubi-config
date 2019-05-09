@@ -2,6 +2,8 @@ import logging
 import yaml
 import requests
 
+from jsonschema.exceptions import ValidationError
+
 from ubiconfig.utils.api.gitlab import RepoApi
 from ubiconfig.utils.config_validation import validate_config
 from ubiconfig.config_types import UbiConfig
@@ -28,12 +30,7 @@ class GitlabLoader(Loader):
         response = self._session.get(config_file_url)
         response.raise_for_status()
 
-        try:
-            config_dict = yaml.safe_load(response.content)
-        except yaml.YAMLError:
-            LOG.error('There is syntax error in your config file %s, please fix', config_file_url)
-            raise
-
+        config_dict = yaml.safe_load(response.content)
         # validate input data
         validate_config(config_dict)
 
@@ -43,7 +40,14 @@ class GitlabLoader(Loader):
         ubi_configs = []
         for file in self._files_branch_map:
             LOG.debug("Now loading %s from branch %s", file, self._files_branch_map[file])
-            ubi_configs.append(self.load(file))
+            try:
+                ubi_configs.append(self.load(file))
+            except yaml.YAMLError:
+                LOG.error("%s FAILED loading because of Syntax error, Skip for now", file)
+                continue
+            except ValidationError as e:
+                LOG.error("%s FAILED schema validation:\n%s\nSkip for now", file, e)
+                continue
 
         return ubi_configs
 

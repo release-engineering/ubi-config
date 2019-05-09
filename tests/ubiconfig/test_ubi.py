@@ -3,6 +3,7 @@ import os
 import pytest
 from mock import patch
 import yaml
+from jsonschema.exceptions import ValidationError
 
 from ubiconfig import ubi, UbiConfig
 
@@ -22,20 +23,40 @@ class FakeResponse():
 
 @pytest.fixture
 def dnf7_config_file():
-    dnf7 = open(os.path.join(TEST_DATA_DIR, 'configs/dnf7/rhel-atomic-host.yaml'))
-    return dnf7
+    with open(os.path.join(TEST_DATA_DIR, 'configs/dnf7/rhel-atomic-host.yaml')) as f:
+        yield f
 
 
 @pytest.fixture
 def ubi7_config_file():
-    ubi7 = open(os.path.join(TEST_DATA_DIR, 'configs/ubi7/rhel-7-for-power-le.yaml'))
-    return ubi7
+    with open(os.path.join(TEST_DATA_DIR, 'configs/ubi7/rhel-7-for-power-le.yaml')) as f:
+        yield f
+
+
+@pytest.fixture
+def invalid_config_file():
+    with open(os.path.join(TEST_DATA_DIR, 'bad_configs/invalid_config.yaml')) as f:
+        yield f
+
+
+@pytest.fixture
+def syntax_error_file():
+    with open(os.path.join(TEST_DATA_DIR, 'bad_configs/syntax_error.yaml')) as f:
+        yield f
 
 
 @pytest.fixture
 def files_branch_map():
     return {'rhel-atomic-host.yaml': 'c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f',
             'rhel-7-for-power-le.yaml': '2189cbc2e447f796fe354f8d784d76b0a2620248'}
+
+
+@pytest.fixture
+def files_branch_map_with_error_config_file(files_branch_map):
+    result_map = {'invaild_config.yaml': 'c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f',
+                  'syntax_error.yaml': 'c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f'}
+    result_map.update(files_branch_map)
+    return result_map
 
 
 @pytest.fixture
@@ -60,6 +81,23 @@ def test_load_all_from_default_repo(mocked_pre_load, mocked_session, files_branc
     assert str(configs[1]) == 'rhel-atomic-host.yaml'
 
 
+@patch('requests.Session')
+@patch('ubiconfig._impl.loaders.GitlabLoader._pre_load')
+def test_load_all_with_error_config(mocked_pre_load, mocked_session, dnf7_config_file,
+                                    ubi7_config_file, invalid_config_file, syntax_error_file,
+                                    response, files_branch_map_with_error_config_file):
+    mocked_pre_load.return_value = files_branch_map_with_error_config_file
+    mocked_session.return_value.get.side_effect = [response(dnf7_config_file),
+                                                   response(ubi7_config_file),
+                                                   response(invalid_config_file),
+                                                   response(syntax_error_file)]
+
+    loader = ubi.get_loader()
+    configs = loader.load_all()
+    assert mocked_session.return_value.get.call_count == 4
+    assert len(configs) == 2
+
+
 def test_load_from_local():
     loader = ubi.get_loader(TEST_DATA_DIR)
     # loads relative to given path
@@ -73,9 +111,15 @@ def test_load_from_nonyaml(tmpdir):
 
     loader = ubi.get_loader(str(tmpdir))
 
-    # The exception from failing to load this file should be propagated
     with pytest.raises(yaml.YAMLError):
         loader.load('some-file.txt')
+
+
+def test_load_local_failed_validation():
+    loader = ubi.get_loader(TEST_DATA_DIR)
+
+    with pytest.raises(ValidationError):
+        loader.load('bad_configs/invalid_config.yaml')
 
 
 def test_load_all_from_local():
@@ -86,21 +130,19 @@ def test_load_all_from_local():
     assert isinstance(configs[0], UbiConfig)
 
 
+def test_load_all_from_local_with_error_configs():
+    loader = ubi.get_loader(TEST_DATA_DIR)
+    configs = loader.load_all(recursive=True)
+
+    assert len(configs) == 2
+
+
 def test_load_all_from_local_recursive():
     repo = os.path.join(TEST_DATA_DIR, 'configs')
     loader = ubi.get_loader(repo)
     configs = loader.load_all(recursive=True)
     assert len(configs) == 2
     assert isinstance(configs[0], UbiConfig)
-
-
-def test_syntax_error_from_config_file():
-    loader = ubi.get_loader(TEST_DATA_DIR)
-    try:
-        loader.load('bad_configs/syntax_error.yaml')
-        raise AssertionError('load should fail!')
-    except yaml.YAMLError as e:
-        assert e.problem == "expected <block end>, but found '?'"
 
 
 def test_get_loader_notexist(tmpdir):

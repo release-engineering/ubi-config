@@ -1,0 +1,30 @@
+# Missing content sets
+
+arches:
+ - ppc64le
+ - s390x
+ - src
+ - x86_64
+packages:
+  include:
+  - libdnf.*
+  - libdnf-debuginfo.*
+  - librhsm.*
+  - librhsm-debuginfo.*
+  - microdnf.*
+  - microdnf-debuginfo.*
+  # Blacklist of packages to exclude
+  exclude:
+  - kernel*
+  - linux-firmware
+
+modules:
+  include:
+  # for nodejs:8, only ship interpreter profile
+  - name: nodejs
+    stream: 8
+    profiles:
+    - interpreter
+  # for nodejs:10, ship all profiles
+  - name: nodejs
+    stream: 10

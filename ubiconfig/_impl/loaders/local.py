@@ -2,6 +2,7 @@ import logging
 import os
 
 import yaml
+from jsonschema.exceptions import ValidationError
 
 from ubiconfig.utils.config_validation import validate_config
 from ubiconfig.config_types import UbiConfig
@@ -19,14 +20,8 @@ class LocalLoader(object):
         file_path = os.path.join(self._path, file_name)
         LOG.info("Loading configuration file locally: %s", file_path)
 
-        try:
-            with open(file_path, 'r') as f:
-                config_dict = yaml.safe_load(f)
-
-        except yaml.YAMLError:
-            LOG.error('There is syntax error in your config file %s, please fix', file_name)
-            raise
-
+        with open(file_path, 'r') as f:
+            config_dict = yaml.safe_load(f)
         # validate input data
         validate_config(config_dict)
 
@@ -38,7 +33,14 @@ class LocalLoader(object):
         file_list = self._get_local_file_list(recursive)
         for file in file_list:
             LOG.debug("Now loading %s", file)
-            ubi_configs.append(self.load(file))
+            try:
+                ubi_configs.append(self.load(file))
+            except yaml.YAMLError:
+                LOG.error("%s FAILED loading because of Syntax error, Skip for now", file)
+                continue
+            except ValidationError as e:
+                LOG.error("%s FAILED schema validation:\n%s\nSkip for now", file, e)
+                continue
 
         return ubi_configs
 
