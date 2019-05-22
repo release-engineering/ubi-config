@@ -38,3 +38,5 @@ modules:
   # for nodejs:10, ship all profiles
   - name: nodejs
     stream: 10
+  - name: something-else
+    stream: 1.10

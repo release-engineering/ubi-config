@@ -30,7 +30,7 @@ class GitlabLoader(Loader):
         response = self._session.get(config_file_url)
         response.raise_for_status()
 
-        config_dict = yaml.safe_load(response.content)
+        config_dict = yaml.load(response.content, Loader=yaml.BaseLoader)
         # validate input data
         validate_config(config_dict)
 

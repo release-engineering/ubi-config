@@ -105,6 +105,12 @@ def test_load_from_local():
     assert isinstance(config, UbiConfig)
 
 
+def test_load_from_local_decimal_integrity():
+    loader = ubi.get_loader(TEST_DATA_DIR)
+    config = loader.load('configs/dnf7/rhel-atomic-host.yaml')
+    assert config.modules.whitelist[2].stream == '1.10'
+
+
 def test_load_from_nonyaml(tmpdir):
     somefile = tmpdir.join('some-file.txt')
     somefile.write('[oops, this is not valid yaml')

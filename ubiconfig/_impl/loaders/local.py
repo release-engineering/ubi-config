@@ -21,7 +21,7 @@ class LocalLoader(object):
         LOG.info("Loading configuration file locally: %s", file_path)
 
         with open(file_path, 'r') as f:
-            config_dict = yaml.safe_load(f)
+            config_dict = yaml.load(f, Loader=yaml.BaseLoader)
         # validate input data
         validate_config(config_dict)
 
