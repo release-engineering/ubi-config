@@ -101,7 +101,7 @@ for you.</p>
 <h2><a class="toc-backref" href="#id3">API Reference</a><a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="ubiconfig.get_loader">
-<code class="descclassname">ubiconfig.</code><code class="descname">get_loader</code><span class="sig-paren">(</span><em>source=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.get_loader" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">ubiconfig.</code><code class="sig-name descname">get_loader</code><span class="sig-paren">(</span><em class="sig-param">source=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.get_loader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a Loader instance which is used to load configurations.</p>
 <p><code class="docutils literal notranslate"><span class="pre">source</span></code> should be provided as one of the following:</p>
 <blockquote>
@@ -135,7 +135,7 @@ when given relative paths to config files.</p>
 
 <dl class="class">
 <dt id="ubiconfig.UbiConfig">
-<em class="property">class </em><code class="descclassname">ubiconfig.</code><code class="descname">UbiConfig</code><span class="sig-paren">(</span><em>cs</em>, <em>pkgs</em>, <em>mds</em>, <em>file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.UbiConfig" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.</code><code class="sig-name descname">UbiConfig</code><span class="sig-paren">(</span><em class="sig-param">cs</em>, <em class="sig-param">pkgs</em>, <em class="sig-param">mds</em>, <em class="sig-param">file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.UbiConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrap all UBI related configurations
 Examples to access different configurations:
 Modules:</p>
@@ -154,13 +154,13 @@ config.content_sets.debuginfo.output</p>
 
 <dl class="class">
 <dt id="ubiconfig.Loader">
-<em class="property">class </em><code class="descclassname">ubiconfig.</code><code class="descname">Loader</code><a class="headerlink" href="#ubiconfig.Loader" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.</code><code class="sig-name descname">Loader</code><a class="headerlink" href="#ubiconfig.Loader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load UBI configuration.</p>
 <p>Don’t construct instances of this class directly;
 use the <a class="reference internal" href="#ubiconfig.get_loader" title="ubiconfig.get_loader"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_loader()</span></code></a> function.</p>
 <dl class="method">
 <dt id="ubiconfig.Loader.load">
-<code class="descname">load</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.Loader.load" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param">file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.Loader.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a single configuration file and return a <a class="reference internal" href="#ubiconfig.UbiConfig" title="ubiconfig.UbiConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">UbiConfig</span></code></a> object.</p>
 <p>The given file_name should be a relative path to a YAML file
 in the loader’s config source (e.g. relative path to file within a
@@ -169,7 +169,7 @@ git repo or local directory).</p>
 
 <dl class="method">
 <dt id="ubiconfig.Loader.load_all">
-<code class="descname">load_all</code><span class="sig-paren">(</span><em>recursive=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.Loader.load_all" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_all</code><span class="sig-paren">(</span><em class="sig-param">recursive=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.Loader.load_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the list of config files from repo and call load on every file.
 Return a list of <a class="reference internal" href="#ubiconfig.UbiConfig" title="ubiconfig.UbiConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">UbiConfig</span></code></a> objects.</p>
 <p>If recursive is set, it will walk through the submodules, no matter local
@@ -207,9 +207,9 @@ or remote</p>
 <hr />
 <ul>
     
-    <li class="toctree-l1"><a href="genindex.html">Index</a></li>
-    
     <li class="toctree-l1"><a href="https://github.com/release-engineering/ubi-config">Source</a></li>
+    
+    <li class="toctree-l1"><a href="genindex.html">Index</a></li>
     
     <li class="toctree-l1"><a href="https://pypi.org/project/ubi-config">PyPI</a></li>
     
@@ -222,10 +222,10 @@ or remote</p>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -247,7 +247,7 @@ or remote</p>
       &copy;2018, Red Hat.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
