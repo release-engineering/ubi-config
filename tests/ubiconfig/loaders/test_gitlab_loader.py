@@ -1,4 +1,5 @@
 import os
+import sys
 
 import pytest
 import yaml
@@ -99,4 +100,6 @@ def test_load_from_cs_with_bad_label(caplog):
         with pytest.raises(KeyError):
             loader.load_from_cs_label('non-existent-rpms')
 
-        assert "No configuration file found for label non-existent" in caplog.text
+        # forget trying to use caplog with Python 2.6
+        if sys.version_info >= (2, 7):
+            assert "No configuration file found for label non-existent" in caplog.text

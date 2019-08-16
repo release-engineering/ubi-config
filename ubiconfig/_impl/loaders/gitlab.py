@@ -37,8 +37,6 @@ class GitlabLoader(Loader):
         return UbiConfig.load_from_dict(config_dict, file_name)
 
     def load_from_cs_label(self, cs_label):
-        ubi_config = None
-
         # strip any suffixes from label
         clean_label = cs_label
         for suffix in ("-rpms", "-source-rpms", "-debug-rpms"):
@@ -51,7 +49,7 @@ class GitlabLoader(Loader):
         for extension in (".yaml", ".yml"):
             try:
                 return self.load(clean_label + extension)
-            except Exception as e:
+            except KeyError as e:
                 load_errs.append(e)
 
         LOG.error("No configuration file found for label %s at %s", clean_label, self._url)
