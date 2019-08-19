@@ -1,11 +1,11 @@
 import os
-import sys
 
 import pytest
 import yaml
 from mock import patch, MagicMock, Mock
 
 from ubiconfig._impl.loaders import GitlabLoader
+from ubiconfig.exceptions import ConfigNotFound
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), '../../data')
 
@@ -64,7 +64,7 @@ def test_load_from_cs(cs_label, ubi7_config_file):
             mock_json([{'name': 'ubi-7-for-power-le.yaml', 'path': 'ubi-7-for-power-le.yaml'}],
                       {'Content-Length': '629', 'X-Total-Pages': '2', 'X-Per-Page': '20'}),
 
-            mock_json([{'name': 'ubi-7-for-power-le.yaml', 'path': 'ubi-7-for-power-le.yaml'}],
+            mock_json([{'name': 'ubi-8-for-power-le.yaml', 'path': 'ubi-8-for-power-le.yaml'}],
                       {'Content-Length': '629', 'X-Total-Pages': '2', 'X-Per-Page': '20'}),
 
             # content
@@ -77,7 +77,7 @@ def test_load_from_cs(cs_label, ubi7_config_file):
     assert str(config) == 'ubi-7-for-power-le.yaml'
 
 
-def test_load_from_cs_with_bad_label(caplog):
+def test_load_from_cs_with_bad_label():
     with patch('requests.Session') as mock_session_class:
         session = mock_session_class.return_value
         session.get.side_effect = [
@@ -89,7 +89,7 @@ def test_load_from_cs_with_bad_label(caplog):
             mock_json([{'name': 'ubi-7-for-power-le.yaml', 'path': 'ubi-7-for-power-le.yaml'}],
                       {'Content-Length': '629', 'X-Total-Pages': '2', 'X-Per-Page': '20'}),
 
-            mock_json([{'name': 'ubi-7-for-power-le.yaml', 'path': 'ubi-7-for-power-le.yaml'}],
+            mock_json([{'name': 'ubi-8-for-power-le.yaml', 'path': 'ubi-8-for-power-le.yaml'}],
                       {'Content-Length': '629', 'X-Total-Pages': '2', 'X-Per-Page': '20'}),
 
             # content
@@ -97,9 +97,7 @@ def test_load_from_cs_with_bad_label(caplog):
         ]
         loader = GitlabLoader('https://some-repo.example.com/foo/bar')
 
-        with pytest.raises(KeyError):
+        with pytest.raises(ConfigNotFound) as e:
             loader.load_from_cs_label('non-existent-rpms')
 
-        # forget trying to use caplog with Python 2.6
-        if sys.version_info >= (2, 7):
-            assert "No configuration file found for label non-existent" in caplog.text
+        assert "No config found for label: non-existent-rpms" in str(e.value)

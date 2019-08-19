@@ -1,13 +1,13 @@
 import logging
-import yaml
-import requests
 
+import requests
+import yaml
 from jsonschema.exceptions import ValidationError
 
+from ubiconfig.config_types import UbiConfig
+from ubiconfig.exceptions import ConfigNotFound
 from ubiconfig.utils.api.gitlab import RepoApi
 from ubiconfig.utils.config_validation import validate_config
-from ubiconfig.config_types import UbiConfig
-
 from .base import Loader
 
 LOG = logging.getLogger('ubiconfig')
@@ -45,15 +45,13 @@ class GitlabLoader(Loader):
 
         # since file could be *.yaml or *.yml, try to load and return
         # each, capturing any failures
-        load_errs = []
         for extension in (".yaml", ".yml"):
             try:
                 return self.load(clean_label + extension)
-            except KeyError as e:
-                load_errs.append(e)
+            except KeyError:
+                pass
 
-        LOG.error("No configuration file found for label %s at %s", clean_label, self._url)
-        raise load_errs[-1]
+        raise ConfigNotFound("No config found for label: %s" % cs_label)
 
     def load_all(self, recursive=False):
         ubi_configs = []
