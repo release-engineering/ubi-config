@@ -27,7 +27,7 @@ class Loader(object):
         """
         raise NotImplementedError()
 
-    def load_by_cs_label(self, content_set_label):
+    def load_by_cs_label(self, cs_label):
         """
         Load all the config files from repo and return one containing config for
         the provided content set label.
