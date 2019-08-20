@@ -26,3 +26,10 @@ class Loader(object):
         or remote
         """
         raise NotImplementedError()
+
+    def load_by_cs_label(self, content_set_label):
+        """
+        Load all the config files from repo and return one containing config for
+        the provided content set label.
+        """
+        raise NotImplementedError()

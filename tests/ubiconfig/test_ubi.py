@@ -1,12 +1,12 @@
 import os
 
 import pytest
-from mock import patch
 import yaml
 from jsonschema.exceptions import ValidationError
+from mock import patch
 
 from ubiconfig import ubi, UbiConfig
-
+from ubiconfig.exceptions import ConfigNotFound
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), '../data')
 ubi.DEFAULT_UBI_REPO = 'https://contentdelivery.com/ubi/data'
@@ -98,6 +98,45 @@ def test_load_all_with_error_config(mocked_pre_load, mocked_session, dnf7_config
     assert len(configs) == 2
 
 
+@patch('requests.Session')
+@patch('ubiconfig._impl.loaders.GitlabLoader._pre_load')
+@pytest.mark.parametrize('cs_label', [
+    'ubi-7-for-power-le-rpms',
+    'rhel-7-for-power-le-rpms',
+    'ubi-7-for-power-le-source-rpms',
+    'rhel-7-for-power-le-source-rpms',
+    'ubi-7-for-power-le-debug-rpms',
+    'rhel-7-for-power-le-debug-rpms',
+])
+def test_load_by_cs_label_default_repo(mocked_pre_load, mocked_session,
+                                       ubi7_config_file, response, cs_label):
+    """Appropriate config file is retrieved for valid content set labels"""
+    mocked_pre_load.return_value = {
+        'rhel-7-for-power-le.yaml': '2189cbc2e447f796fe354f8d784d76b0a2620248'
+    }
+    mocked_session.return_value.get.return_value = response(ubi7_config_file)
+    loader = ubi.get_loader()
+    config = loader.load_by_cs_label(cs_label)
+    assert isinstance(config, UbiConfig)
+    assert str(config) == 'rhel-7-for-power-le.yaml'
+
+
+@patch('requests.Session')
+@patch('ubiconfig._impl.loaders.GitlabLoader._pre_load')
+def test_load_by_cs_label_with_bad_label(mocked_pre_load, mocked_session,
+                                         ubi7_config_file, response):
+    """ConfigNotFound exception is raised for invalid content set labels"""
+    mocked_pre_load.return_value = {
+        'rhel-7-for-power-le.yaml': '2189cbc2e447f796fe354f8d784d76b0a2620248'
+    }
+    mocked_session.return_value.get.return_value = response(ubi7_config_file)
+    loader = ubi.get_loader()
+    with pytest.raises(ConfigNotFound) as e:
+        loader.load_by_cs_label('non-existent-rpms')
+
+    assert "No config found for label: non-existent-rpms" in str(e.value)
+
+
 def test_load_from_local():
     loader = ubi.get_loader(TEST_DATA_DIR)
     # loads relative to given path
@@ -149,6 +188,31 @@ def test_load_all_from_local_recursive():
     configs = loader.load_all(recursive=True)
     assert len(configs) == 2
     assert isinstance(configs[0], UbiConfig)
+
+
+@pytest.mark.parametrize('cs_label', [
+    'ubi-7-for-power-le-rpms',
+    'rhel-7-for-power-le-rpms',
+    'ubi-7-for-power-le-source-rpms',
+    'rhel-7-for-power-le-source-rpms',
+    'ubi-7-for-power-le-debug-rpms',
+    'rhel-7-for-power-le-debug-rpms',
+])
+def test_load_by_cs_label_local(cs_label):
+    """Appropriate config file is retrieved for valid content set labels"""
+    loader = ubi.get_loader(TEST_DATA_DIR)
+    config = loader.load_by_cs_label(cs_label)
+    assert isinstance(config, UbiConfig)
+    assert str(config) == 'rhel-7-for-power-le.yaml'
+
+
+def test_load_by_cs_label_local_bad_label():
+    """ConfigNotFound exception is raised for invalid content set labels"""
+    loader = ubi.get_loader(TEST_DATA_DIR)
+    with pytest.raises(ConfigNotFound) as e:
+        loader.load_by_cs_label('non-existent-rpms')
+
+    assert "No config found for label: non-existent-rpms" in str(e.value)
 
 
 def test_get_loader_notexist(tmpdir):

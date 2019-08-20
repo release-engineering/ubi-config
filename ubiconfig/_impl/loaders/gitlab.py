@@ -36,23 +36,6 @@ class GitlabLoader(Loader):
 
         return UbiConfig.load_from_dict(config_dict, file_name)
 
-    def load_from_cs_label(self, cs_label):
-        # strip any suffixes from label
-        clean_label = cs_label
-        for suffix in ("-rpms", "-source-rpms", "-debug-rpms"):
-            if cs_label.endswith(suffix):
-                clean_label = cs_label.replace(suffix, "")
-
-        # since file could be *.yaml or *.yml, try to load and return
-        # each, capturing any failures
-        for extension in (".yaml", ".yml"):
-            try:
-                return self.load(clean_label + extension)
-            except KeyError:
-                pass
-
-        raise ConfigNotFound("No config found for label: %s" % cs_label)
-
     def load_all(self, recursive=False):
         ubi_configs = []
         for file in self._files_branch_map:
@@ -67,6 +50,23 @@ class GitlabLoader(Loader):
                 continue
 
         return ubi_configs
+
+    def load_by_cs_label(self, cs_label):
+        ubi_configs = self.load_all(recursive=True)
+
+        for config in ubi_configs:
+            for cs in [
+                config.content_sets.rpm.input,
+                config.content_sets.rpm.output,
+                config.content_sets.srpm.input,
+                config.content_sets.srpm.output,
+                config.content_sets.debuginfo.input,
+                config.content_sets.debuginfo.output,
+            ]:
+                if cs == cs_label:
+                    return config
+
+        raise ConfigNotFound("No config found for label: %s" % cs_label)
 
     def _pre_load(self):
         """Iterate all branches to get a mapping of {file_path: branch,...}
