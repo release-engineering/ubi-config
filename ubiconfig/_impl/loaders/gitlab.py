@@ -51,6 +51,7 @@ class GitlabLoader(Loader):
         return ubi_configs
 
     def load_by_cs_label(self, cs_label):
+        # pylint: disable=useless-super-delegation
         return super(GitlabLoader, self).load_by_cs_label(cs_label)
 
     def _pre_load(self):

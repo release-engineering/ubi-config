@@ -45,6 +45,7 @@ class LocalLoader(Loader):
         return ubi_configs
 
     def load_by_cs_label(self, cs_label):
+        # pylint: disable=useless-super-delegation
         return super(LocalLoader, self).load_by_cs_label(cs_label)
 
     def _get_local_file_list(self, recursive):
