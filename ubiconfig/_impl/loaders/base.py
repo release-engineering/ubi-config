@@ -1,3 +1,6 @@
+from ubiconfig.exceptions import ConfigNotFound
+
+
 class Loader(object):
     """Load UBI configuration.
 
@@ -32,4 +35,19 @@ class Loader(object):
         Load all the config files from repo and return one containing config for
         the provided content set label.
         """
-        raise NotImplementedError()
+
+        ubi_configs = self.load_all(recursive=True)
+
+        for config in ubi_configs:
+            for cs in [
+                config.content_sets.rpm.input,
+                config.content_sets.rpm.output,
+                config.content_sets.srpm.input,
+                config.content_sets.srpm.output,
+                config.content_sets.debuginfo.input,
+                config.content_sets.debuginfo.output,
+            ]:
+                if cs == cs_label:
+                    return config
+
+        raise ConfigNotFound("No config found for label: %s" % cs_label)

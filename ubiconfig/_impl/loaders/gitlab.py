@@ -5,7 +5,6 @@ import yaml
 from jsonschema.exceptions import ValidationError
 
 from ubiconfig.config_types import UbiConfig
-from ubiconfig.exceptions import ConfigNotFound
 from ubiconfig.utils.api.gitlab import RepoApi
 from ubiconfig.utils.config_validation import validate_config
 from .base import Loader
@@ -52,21 +51,7 @@ class GitlabLoader(Loader):
         return ubi_configs
 
     def load_by_cs_label(self, cs_label):
-        ubi_configs = self.load_all(recursive=True)
-
-        for config in ubi_configs:
-            for cs in [
-                config.content_sets.rpm.input,
-                config.content_sets.rpm.output,
-                config.content_sets.srpm.input,
-                config.content_sets.srpm.output,
-                config.content_sets.debuginfo.input,
-                config.content_sets.debuginfo.output,
-            ]:
-                if cs == cs_label:
-                    return config
-
-        raise ConfigNotFound("No config found for label: %s" % cs_label)
+        return super(GitlabLoader, self).load_by_cs_label(cs_label)
 
     def _pre_load(self):
         """Iterate all branches to get a mapping of {file_path: branch,...}

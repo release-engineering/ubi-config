@@ -5,13 +5,13 @@ import yaml
 from jsonschema.exceptions import ValidationError
 
 from ubiconfig.config_types import UbiConfig
-from ubiconfig.exceptions import ConfigNotFound
 from ubiconfig.utils.config_validation import validate_config
+from .base import Loader
 
 LOG = logging.getLogger('ubiconfig')
 
 
-class LocalLoader(object):
+class LocalLoader(Loader):
     """Load configuration from a local directory tree."""
     def __init__(self, path):
         self._path = path
@@ -45,21 +45,7 @@ class LocalLoader(object):
         return ubi_configs
 
     def load_by_cs_label(self, cs_label):
-        ubi_configs = self.load_all(recursive=True)
-
-        for config in ubi_configs:
-            for cs in [
-                config.content_sets.rpm.input,
-                config.content_sets.rpm.output,
-                config.content_sets.srpm.input,
-                config.content_sets.srpm.output,
-                config.content_sets.debuginfo.input,
-                config.content_sets.debuginfo.output,
-            ]:
-                if cs == cs_label:
-                    return config
-
-        raise ConfigNotFound("No config found for label: %s" % cs_label)
+        return super(LocalLoader, self).load_by_cs_label(cs_label)
 
     def _get_local_file_list(self, recursive):
         """
