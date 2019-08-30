@@ -2,28 +2,27 @@
 
 
 class ContentSetMapping(object):
-
     def __init__(self, input_content, output_content):
         self.input = input_content
         self.output = output_content
 
 
 class Rpm(ContentSetMapping):
-
+    """Input-output rpm content sets mapping"""
     @property
     def type(self):
         return 'rpm'
 
 
 class Srpm(ContentSetMapping):
-
+    """Input-output srpm content sets mapping"""
     @property
     def type(self):
         return 'srpm'
 
 
 class Debuginfo(ContentSetMapping):
-
+    """Input-output debuginfo content sets mapping"""
     @property
     def type(self):
         return 'debuginfo'
@@ -31,12 +30,33 @@ class Debuginfo(ContentSetMapping):
 
 class ContentSetsMapping(object):
     def __init__(self, rpm, srpm, debuginfo):
+        """
+        Args:
+            rpm(:class:`Rpm`): rpm content sets mapping
+            srpm(:class:`Srpm`): srpm content sets mapping
+            debuginfo(:class:`Debuginfo`): debuginfo content sets mapping
+        """
         self.rpm = rpm
         self.srpm = srpm
         self.debuginfo = debuginfo
 
     @classmethod
     def load_from_dict(cls, data):
+        """create instances of :class:`ContentSetsMapping` from a dictionary
+        Args:
+            data(dict): dictionary with data of following format
+
+.. code-block:: json
+
+        {
+            "rpm": {"input": "input_content_sets",
+                    "output":"output_content_sets"},
+            "srpm": {"input": "input_content_sets",
+                     "output":"output_content_sets"},
+            "debuginfo": {"input": "input_content_sets",
+                          "output":"output_content_sets"}
+        }
+        """
         rpm_data = data.get('rpm', {})
         rpm = Rpm(rpm_data.get('input', ''), rpm_data.get('output', ''))
 

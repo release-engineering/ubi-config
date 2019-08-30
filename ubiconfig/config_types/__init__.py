@@ -15,6 +15,12 @@ class UbiConfig(object):
       config.content_sets.rpm.input
       config.content_sets.debuginfo.output"""
     def __init__(self, cs, pkgs, mds, file_name):
+        """
+        :param cs: :class:`~ubiconfig.config_types.content_sets.ContentSetsMapping`
+        :param pkgs: :class:`~ubiconfig.config_types.packages.Packages`
+        :param mds: :class:`~ubiconfig.config_types.modules.Modules`
+        :param filename: filename used as identificator
+        """
         self.content_sets = cs
         self.packages = pkgs
         self.modules = mds
@@ -25,6 +31,26 @@ class UbiConfig(object):
 
     @classmethod
     def load_from_dict(cls, data, file_name):
+        """Create new instance of UbiConfig and load it from provided dictonary with
+following format:
+
+    {
+
+        "modules":  ...
+        see :meth:`~ubiconfig.config_types.modules.Modules.load_from_dict` for more info,
+
+        "packages": {
+            "include": [<str>, <str>],
+            "exclude": [<str>, <str>],
+            "arches": [<str>, <str>]
+
+        },
+
+        "content_sets": ...
+        see :meth:`~ubiconfig.config_types.content_sets.ContentSetsMapping.load_from_dict`
+
+    }
+"""
         m_data = Modules.load_from_dict(data.get('modules', {}))
         pkgs = data.get('packages', {})
         pkgs_data = Packages(pkgs.get('include', []),

@@ -31,6 +31,12 @@ class ExcludePackage(Package):
 class Packages(object):
 
     def __init__(self, include, exclude, arches):
+        """
+        Args:
+            include(list): list of packages to whitelist
+            exclude(list): list of packages to blacklist
+            arches(list): list of arches of packages in whitelist and blacklist
+        """
         self.whitelist, self.blacklist = [], []
         for package in include:
             self.whitelist.append(IncludePackage(package, arches))

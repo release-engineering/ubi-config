@@ -75,11 +75,61 @@ Except the above usage, there are some other use cases:
 
 API Reference
 -------------
-
+:mod:`ubiconfig`
+================
 .. currentmodule:: ubiconfig
+
 .. autofunction:: get_loader
 
 .. autoclass:: UbiConfig
+    :members: load_from_dict
 
 .. autoclass:: Loader
     :members: load, load_all
+
+:mod:`ubiconfig.ubi`
+====================
+
+.. currentmodule:: ubiconfig.ubi
+
+.. autoclass:: GitlabLoader
+    :members: load, load_all
+
+.. autoclass:: LocalLoader
+    :members: load, load_all
+
+:mod:`ubiconfig.config_types.packages`
+======================================
+
+.. currentmodule:: ubiconfig.config_types.packages
+.. autoclass:: Packages
+  :members:
+
+:mod:`ubiconfig.config_types.modules`
+=====================================
+
+.. currentmodule:: ubiconfig.config_types.modules
+.. autoclass:: Modules
+    :members: load_from_dict
+
+.. autoclass:: Module
+    :members:
+
+
+:mod:`ubiconfig.config_types.content_sets`
+==========================================
+
+.. currentmodule:: ubiconfig.config_types.content_sets
+.. autoclass:: ContentSetsMapping
+    :members: load_from_dict
+
+.. autoclass:: Rpm
+.. autoclass:: Srpm
+.. autoclass:: Debuginfo
+
+:mod:`ubiconfig.utils.config_validation`
+========================================
+
+.. currentmodule:: ubiconfig.utils.config_validation
+.. autofunction:: validate_config
+.. autodata:: DEFAULT_SCHEMA

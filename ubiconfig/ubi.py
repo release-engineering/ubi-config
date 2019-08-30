@@ -22,11 +22,11 @@ def get_loader(source=None):
 
         URL
             A URL of a remote git repo containing UBI config files.
-            Currently, only Gitlab is supported.
+            Currently, only Gitlab is supported. See :class:`ubiconfig.ubi.GitlabLoader`
 
         local path
             A path to a local directory containing UBI config files.
-
+            See :class:`ubiconfig.ubi.LocalLoader`
         :any:`None`
             If none/omitted, the value of the ``DEFAULT_UBI_REPO``
             environment variable is used. If this is unset, an
