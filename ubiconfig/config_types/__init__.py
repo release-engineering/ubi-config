@@ -19,7 +19,7 @@ class UbiConfig(object):
         :param cs: :class:`~ubiconfig.config_types.content_sets.ContentSetsMapping`
         :param pkgs: :class:`~ubiconfig.config_types.packages.Packages`
         :param mds: :class:`~ubiconfig.config_types.modules.Modules`
-        :param filename: filename used as identificator
+        :param filename: filename used as identifier
         """
         self.content_sets = cs
         self.packages = pkgs

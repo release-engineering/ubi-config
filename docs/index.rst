@@ -87,17 +87,6 @@ API Reference
 .. autoclass:: Loader
     :members: load, load_all
 
-:mod:`ubiconfig.ubi`
-====================
-
-.. currentmodule:: ubiconfig.ubi
-
-.. autoclass:: GitlabLoader
-    :members: load, load_all
-
-.. autoclass:: LocalLoader
-    :members: load, load_all
-
 :mod:`ubiconfig.config_types.packages`
 ======================================
 
@@ -127,9 +116,59 @@ API Reference
 .. autoclass:: Srpm
 .. autoclass:: Debuginfo
 
-:mod:`ubiconfig.utils.config_validation`
-========================================
 
-.. currentmodule:: ubiconfig.utils.config_validation
-.. autofunction:: validate_config
-.. autodata:: DEFAULT_SCHEMA
+.. _yaml_format:
+
+Configuration files format
+==========================
+
+Loaded configuration files has to be presented in following format
+
+.. code-block:: yaml
+
+  content_sets:
+    rpm:
+      output: <output-content-set>
+      input: <input-content-set>
+    srpm:
+      output: <output-content-set>
+      input: <input-content-set>
+    debuginfo:
+      output: <output-content-set>
+      input: <input-content-set>
+  arches:
+   - <arch-for-all-content-sets>
+   - <arch-for-all-content-sets>
+  packages:
+    include:
+    - <whitelisted-package-full-name>
+    - <whitelisted-package-name-regular-expresion-.*>
+
+    # Blacklist of packages to exclude
+    exclude:
+    - <whitelisted-package-full-name>
+    - <whitelisted-package-name-regular-expresion-.*>
+  modules:
+    include:
+    - name: <module-name>
+      stream: <module-stream>
+
+See also :py:meth:`~ubiconfig.Loader.load_all`, :py:meth:`~ubiconfig.Loader.load`, :py:meth:`~ubiconfig.get_loader`
+
+.. _git_repo_format:
+
+Configuration git repository structure
+======================================
+
+When git repository as passed as source for config data to :py:meth:`~ubiconfig.Loader.load` or :py:meth:`~ubiconfig.Loader.load_all`
+it has to be have following structure:
+
+::
+  <branch-x-root-dir>:
+    - <configuration-file-1>.yaml
+    - <configuration-file-1>.yaml
+    - <configuration-file-1>.yaml
+    - <configuration-file-1>.yaml
+
+See also: :ref:`yaml_format`
+

@@ -31,15 +31,16 @@ class Modules(object):
         Args:
             data(dict): dictionary with data of following format
 
-.. code-block:: json
+        .. code-block:: json
 
-        {"include": [
-            {
-                "name": "<module_name>",
-                "stream": "<module_stream>",
-                "profiles": "<module_profiles>"
+            {"include": [
+                    {
+                        "name": "<module_name>",
+                        "stream": "<module_stream>",
+                        "profiles": "<module_profiles>"
+                    }
+                ]
             }
-        ]}
         """
         include = []
 

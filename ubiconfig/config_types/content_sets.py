@@ -42,20 +42,21 @@ class ContentSetsMapping(object):
 
     @classmethod
     def load_from_dict(cls, data):
-        """create instances of :class:`ContentSetsMapping` from a dictionary
+        """Create instances of :class:`ContentSetsMapping` from a dictionary
+
         Args:
             data(dict): dictionary with data of following format
 
-.. code-block:: json
+        .. code-block:: json
 
-        {
-            "rpm": {"input": "input_content_sets",
-                    "output":"output_content_sets"},
-            "srpm": {"input": "input_content_sets",
-                     "output":"output_content_sets"},
-            "debuginfo": {"input": "input_content_sets",
-                          "output":"output_content_sets"}
-        }
+            {
+                "rpm": {"input": "<input_content_set>",
+                        "output":"<output_content_set>"},
+                "srpm": {"input": "<input_content_set>",
+                         "output":"<output_content_set>"},
+                "debuginfo": {"input": "<input_content_set>",
+                              "output":"<output_content_set>"}
+            }
         """
         rpm_data = data.get('rpm', {})
         rpm = Rpm(rpm_data.get('input', ''), rpm_data.get('output', ''))

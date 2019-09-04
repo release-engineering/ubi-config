@@ -67,7 +67,7 @@ def response():
 
 
 @patch('requests.Session')
-@patch('ubiconfig._impl.loaders.GitlabLoader._pre_load')
+@patch('ubiconfig._impl.loaders._GitlabLoader._pre_load')
 def test_load_all_from_default_repo(mocked_pre_load, mocked_session, files_branch_map,
                                     dnf7_config_file, ubi7_config_file, response):
     mocked_pre_load.return_value = files_branch_map
@@ -82,7 +82,7 @@ def test_load_all_from_default_repo(mocked_pre_load, mocked_session, files_branc
 
 
 @patch('requests.Session')
-@patch('ubiconfig._impl.loaders.GitlabLoader._pre_load')
+@patch('ubiconfig._impl.loaders._GitlabLoader._pre_load')
 def test_load_all_with_error_config(mocked_pre_load, mocked_session, dnf7_config_file,
                                     ubi7_config_file, invalid_config_file, syntax_error_file,
                                     response, files_branch_map_with_error_config_file):
@@ -202,7 +202,7 @@ def test_get_branches(mocked_session):
 
 
 @patch('requests.Session')
-@patch('ubiconfig._impl.loaders.GitlabLoader._get_branches')
+@patch('ubiconfig._impl.loaders._GitlabLoader._get_branches')
 def test_pre_load(mocked_get_branches, mocked_session, files_branch_map):
     branches = ['c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f',
                 '2189cbc2e447f796fe354f8d784d76b0a2620248']
