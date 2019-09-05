@@ -32,25 +32,23 @@ class UbiConfig(object):
     @classmethod
     def load_from_dict(cls, data, file_name):
         """Create new instance of UbiConfig and load it from provided dictonary with
-following format:
+        following format:
 
-    {
+        .. code-block:: json
 
-        "modules":  ...
-        see :meth:`~ubiconfig.config_types.modules.Modules.load_from_dict` for more info,
+            {
+                "modules":  {},
+                "packages": {
+                    "include": ["package-name-.*"],
+                    "exclude": ["package-name-.*"],
+                    "arches": ["arch"]
+                },
+                "content_sets": {},
+            }
 
-        "packages": {
-            "include": [<str>, <str>],
-            "exclude": [<str>, <str>],
-            "arches": [<str>, <str>]
-
-        },
-
-        "content_sets": ...
-        see :meth:`~ubiconfig.config_types.content_sets.ContentSetsMapping.load_from_dict`
-
-    }
-"""
+        See also :meth:`ubiconfig.config_types.content_sets.ContentSetsMapping.load_from_dict`
+        :meth:`ubiconfig.config_types.modules.Modules.load_from_dict`
+        """
         m_data = Modules.load_from_dict(data.get('modules', {}))
         pkgs = data.get('packages', {})
         pkgs_data = Packages(pkgs.get('include', []),
