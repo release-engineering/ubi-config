@@ -3,7 +3,7 @@ import logging
 
 from six.moves.urllib.parse import urlparse
 
-from ._impl.loaders import LocalLoader, GitlabLoader
+from ._impl.loaders import _LocalLoader, _GitlabLoader
 
 
 DEFAULT_UBI_REPO = os.getenv("DEFAULT_UBI_REPO", "")
@@ -23,9 +23,11 @@ def get_loader(source=None):
         URL
             A URL of a remote git repo containing UBI config files.
             Currently, only Gitlab is supported.
+            See :ref:`git_repo_format`
 
         local path
             A path to a local directory containing UBI config files.
+            See :ref:`yaml_format`
 
         :any:`None`
             If none/omitted, the value of the ``DEFAULT_UBI_REPO``
@@ -58,10 +60,10 @@ def get_loader(source=None):
     parsed = urlparse(source)
     if parsed.netloc:
         # It's a URL, use the gitlab loader
-        return GitlabLoader(source)
+        return _GitlabLoader(source)
 
     # It should be a local path
     if not os.path.isdir(source):
         raise LoaderError("'%s' is not an existing directory" % source)
 
-    return LocalLoader(source)
+    return _LocalLoader(source)

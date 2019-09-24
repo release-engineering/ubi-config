@@ -16,12 +16,18 @@ LOG = logging.getLogger('ubiconfig')
 class GitlabLoader(Loader):
     """Load configuration from a remote repo on gitlab."""
     def __init__(self, url):
+        """
+        :param url: gitlab repo url in form of `https://<host>/<repo>`
+        """
         self._url = url
         self._session = requests.Session()
         self._repo_api = RepoApi(self._url.rstrip('/'))
         self._files_branch_map = self._pre_load()
 
     def load(self, file_name):
+        """ Load file from remote repository.
+        :param file_name: filename that is on remote repository in any branch
+        """
         # find the right branch from the mapping
         branch = self._files_branch_map[file_name]
 

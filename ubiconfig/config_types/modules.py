@@ -18,7 +18,7 @@ class Modules(object):
     def __init__(self, include):
         """
         Args:
-            include(list): a list of Module instances
+            include(list): a list of :class:`Module` instances
         """
         self.whitelist = include
 
@@ -27,7 +27,21 @@ class Modules(object):
 
     @classmethod
     def load_from_dict(cls, data):
-        """create instances of moudles from a dictionary"""
+        """Create instances of :class:`Modules` from a dictionary
+        Args:
+            data(dict): dictionary with data of following format
+
+        .. code-block:: json
+
+            {"include": [
+                    {
+                        "name": "<module_name>",
+                        "stream": "<module_stream>",
+                        "profiles": "<module_profiles>"
+                    }
+                ]
+            }
+        """
         include = []
 
         for item in data.get('include', []):
