@@ -28,6 +28,7 @@ class Modules(object):
     @classmethod
     def load_from_dict(cls, data):
         """Create instances of :class:`Modules` from a dictionary
+
         Args:
             data(dict): dictionary with data of following format
 

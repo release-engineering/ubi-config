@@ -6,6 +6,7 @@ from .content_sets import ContentSetsMapping
 class UbiConfig(object):
     """Wrap all UBI related configurations
     Examples to access different configurations:
+
     Modules:
       config.modules[0].whitelist[0].name
     Packages:
