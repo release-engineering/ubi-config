@@ -163,12 +163,11 @@ Configuration git repository structure
 When git repository as passed as source for config data to :py:meth:`~ubiconfig.Loader.load` or :py:meth:`~ubiconfig.Loader.load_all`
 it has to be have following structure:
 
-::
-  <branch-x-root-dir>:
-    - <configuration-file-1>.yaml
-    - <configuration-file-1>.yaml
-    - <configuration-file-1>.yaml
-    - <configuration-file-1>.yaml
+<branch-x-root-dir>:
+ - <configuration-file-1>.yaml
+ - <configuration-file-1>.yaml
+ - <configuration-file-1>.yaml
+ - <configuration-file-1>.yaml
 
 See also: :ref:`yaml_format`
 

@@ -143,12 +143,10 @@ when given relative paths to config files.</p>
 <dt id="ubiconfig.UbiConfig">
 <em class="property">class </em><code class="sig-prename descclassname">ubiconfig.</code><code class="sig-name descname">UbiConfig</code><span class="sig-paren">(</span><em class="sig-param">cs</em>, <em class="sig-param">pkgs</em>, <em class="sig-param">mds</em>, <em class="sig-param">file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.UbiConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrap all UBI related configurations
-Examples to access different configurations:
-Modules:</p>
-<blockquote>
-<div><p>config.modules[0].whitelist[0].name</p>
-</div></blockquote>
+Examples to access different configurations:</p>
 <dl class="simple">
+<dt>Modules:</dt><dd><p>config.modules[0].whitelist[0].name</p>
+</dd>
 <dt>Packages:</dt><dd><p>config.packages.whitelist[0].name
 config.packages.blacklist[0].name</p>
 </dd>
@@ -246,9 +244,12 @@ or remote</p>
 <dl class="method">
 <dt id="ubiconfig.config_types.modules.Modules.load_from_dict">
 <em class="property">classmethod </em><code class="sig-name descname">load_from_dict</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.modules.Modules.load_from_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create instances of <a class="reference internal" href="#ubiconfig.config_types.modules.Modules" title="ubiconfig.config_types.modules.Modules"><code class="xref py py-class docutils literal notranslate"><span class="pre">Modules</span></code></a> from a dictionary
-:param data: dictionary with data of following format
-:type data: dict</p>
+<dd><p>Create instances of <a class="reference internal" href="#ubiconfig.config_types.modules.Modules" title="ubiconfig.config_types.modules.Modules"><code class="xref py py-class docutils literal notranslate"><span class="pre">Modules</span></code></a> from a dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – dictionary with data of following format</p>
+</dd>
+</dl>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;include&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
             <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;module_name&gt;&quot;</span><span class="p">,</span>
@@ -364,15 +365,12 @@ or remote</p>
 <p>When git repository as passed as source for config data to <a class="reference internal" href="#ubiconfig.Loader.load" title="ubiconfig.Loader.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load()</span></code></a> or <a class="reference internal" href="#ubiconfig.Loader.load_all" title="ubiconfig.Loader.load_all"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_all()</span></code></a>
 it has to be have following structure:</p>
 <dl class="simple">
-<dt>::</dt><dd><dl class="simple">
 <dt>&lt;branch-x-root-dir&gt;:</dt><dd><ul class="simple">
 <li><p>&lt;configuration-file-1&gt;.yaml</p></li>
 <li><p>&lt;configuration-file-1&gt;.yaml</p></li>
 <li><p>&lt;configuration-file-1&gt;.yaml</p></li>
 <li><p>&lt;configuration-file-1&gt;.yaml</p></li>
 </ul>
-</dd>
-</dl>
 </dd>
 </dl>
 <p>See also: <a class="reference internal" href="#yaml-format"><span class="std std-ref">Configuration files format</span></a></p>
@@ -404,11 +402,11 @@ it has to be have following structure:</p>
 <hr />
 <ul>
     
-    <li class="toctree-l1"><a href="genindex.html">Index</a></li>
-    
     <li class="toctree-l1"><a href="https://pypi.org/project/ubi-config">PyPI</a></li>
     
     <li class="toctree-l1"><a href="https://github.com/release-engineering/ubi-config">Source</a></li>
+    
+    <li class="toctree-l1"><a href="genindex.html">Index</a></li>
     
 </ul>
 <div class="relations">
