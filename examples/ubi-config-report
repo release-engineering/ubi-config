@@ -12,7 +12,7 @@ from ubiconfig import get_loader
 def do_report(source):
     loader = get_loader(source)
 
-    all_configs = loader.load_all(recursive=True)
+    all_configs = loader.load_all()
     all_configs.sort(key=lambda config: config.file_name)
 
     print("Found %d UBI configuration files" % len(all_configs))

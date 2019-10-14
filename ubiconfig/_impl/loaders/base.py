@@ -18,11 +18,8 @@ class Loader(object):
         """
         raise NotImplementedError()
 
-    def load_all(self, recursive=False):
+    def load_all(self):
         """Get the list of config files from repo and call load on every file.
         Return a list of :class:`UbiConfig` objects.
-
-        If recursive is set, it will walk through the submodules, no matter local
-        or remote
         """
         raise NotImplementedError()

@@ -40,16 +40,20 @@ class GitlabLoader(Loader):
         # validate input data
         validate_config(config_dict)
 
-        return UbiConfig.load_from_dict(config_dict, file_name)
+        return UbiConfig.load_from_dict(config_dict, file_name, version)
 
-    def load_all(self, recursive=False):
+    def load_all(self):
         ubi_configs = []
         for file in self._files_branch_map:
-            LOG.debug("Now loading %s from branch %s", file, self._files_branch_map[file])
+            LOG.debug(
+                "Now loading %s from branch %s", file, self._files_branch_map[file][0]
+            )
             try:
                 ubi_configs.append(self.load(file))
             except yaml.YAMLError:
-                LOG.error("%s FAILED loading because of Syntax error, Skip for now", file)
+                LOG.error(
+                    "%s FAILED loading because of Syntax error, Skip for now", file
+                )
                 continue
             except ValidationError as e:
                 LOG.error("%s FAILED schema validation:\n%s\nSkip for now", file, e)

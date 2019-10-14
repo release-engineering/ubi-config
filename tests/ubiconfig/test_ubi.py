@@ -138,15 +138,15 @@ def test_load_all_from_local():
 
 def test_load_all_from_local_with_error_configs():
     loader = ubi.get_loader(TEST_DATA_DIR)
-    configs = loader.load_all(recursive=True)
+    configs = loader.load_all()
 
     assert len(configs) == 2
 
 
 def test_load_all_from_local_recursive():
-    repo = os.path.join(TEST_DATA_DIR, 'configs')
+    repo = os.path.join(TEST_DATA_DIR, "configs")
     loader = ubi.get_loader(repo)
-    configs = loader.load_all(recursive=True)
+    configs = loader.load_all()
     assert len(configs) == 2
     assert isinstance(configs[0], UbiConfig)
 
