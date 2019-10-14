@@ -8,7 +8,7 @@ from ._impl.loaders import _LocalLoader, _GitlabLoader
 
 DEFAULT_UBI_REPO = os.getenv("DEFAULT_UBI_REPO", "")
 
-LOG = logging.getLogger('ubiconfig')
+LOG = logging.getLogger("ubiconfig")
 
 
 class LoaderError(RuntimeError):
@@ -54,7 +54,9 @@ def get_loader(source=None):
         source = DEFAULT_UBI_REPO
 
     if not source:
-        msg = 'Please either set a source or define DEFAULT_UBI_REPO in your environment'
+        msg = (
+            "Please either set a source or define DEFAULT_UBI_REPO in your environment"
+        )
         raise LoaderError(msg)
 
     parsed = urlparse(source)

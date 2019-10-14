@@ -10,18 +10,19 @@ from ubiconfig.config_types import UbiConfig
 
 from .base import Loader
 
-LOG = logging.getLogger('ubiconfig')
+LOG = logging.getLogger("ubiconfig")
 
 
 class GitlabLoader(Loader):
     """Load configuration from a remote repo on gitlab."""
+
     def __init__(self, url):
         """
         :param url: gitlab repo url in form of `https://<host>/<repo>`
         """
         self._url = url
         self._session = requests.Session()
-        self._repo_api = RepoApi(self._url.rstrip('/'))
+        self._repo_api = RepoApi(self._url.rstrip("/"))
         self._files_branch_map = self._pre_load()
 
     def load(self, file_name):

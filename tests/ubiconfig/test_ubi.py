@@ -8,11 +8,11 @@ from jsonschema.exceptions import ValidationError
 from ubiconfig import ubi, UbiConfig
 
 
-TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), '../data')
-ubi.DEFAULT_UBI_REPO = 'https://contentdelivery.com/ubi/data'
+TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "../data")
+ubi.DEFAULT_UBI_REPO = "https://contentdelivery.com/ubi/data"
 
 
-class FakeResponse():
+class FakeResponse:
     def __init__(self, content):
         self.content = content
 
@@ -183,15 +183,17 @@ def test_get_loader_notexist(tmpdir):
     with pytest.raises(ubi.LoaderError) as exc:
         ubi.get_loader(str(tmpdir.join("not-exist-dir")))
 
-    assert 'not an existing directory' in str(exc.value)
+    assert "not an existing directory" in str(exc.value)
 
 
 def test_default_or_local_repo_not_set():
     try:
-        ubi.DEFAULT_UBI_REPO = ''
+        ubi.DEFAULT_UBI_REPO = ""
 
-        expected_error = ('Please either set a source or define DEFAULT_UBI_REPO '
-                          'in your environment')
+        expected_error = (
+            "Please either set a source or define DEFAULT_UBI_REPO "
+            "in your environment"
+        )
 
         with pytest.raises(ubi.LoaderError) as exc:
             ubi.get_loader()

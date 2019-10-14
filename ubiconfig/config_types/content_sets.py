@@ -9,23 +9,26 @@ class ContentSetMapping(object):
 
 class Rpm(ContentSetMapping):
     """Input-output rpm content sets mapping"""
+
     @property
     def type(self):
-        return 'rpm'
+        return "rpm"
 
 
 class Srpm(ContentSetMapping):
     """Input-output srpm content sets mapping"""
+
     @property
     def type(self):
-        return 'srpm'
+        return "srpm"
 
 
 class Debuginfo(ContentSetMapping):
     """Input-output debuginfo content sets mapping"""
+
     @property
     def type(self):
-        return 'debuginfo'
+        return "debuginfo"
 
 
 class ContentSetsMapping(object):
@@ -58,14 +61,14 @@ class ContentSetsMapping(object):
                               "output":"<output_content_set>"}
             }
         """
-        rpm_data = data.get('rpm', {})
-        rpm = Rpm(rpm_data.get('input', ''), rpm_data.get('output', ''))
+        rpm_data = data.get("rpm", {})
+        rpm = Rpm(rpm_data.get("input", ""), rpm_data.get("output", ""))
 
-        srpm_data = data.get('srpm', {})
-        srpm = Srpm(srpm_data.get('input', ''), srpm_data.get('output', ''))
+        srpm_data = data.get("srpm", {})
+        srpm = Srpm(srpm_data.get("input", ""), srpm_data.get("output", ""))
 
-        debug_data = data.get('debuginfo', {})
-        debuginfo = Debuginfo(debug_data.get('input', ''), debug_data.get('output', ''))
+        debug_data = data.get("debuginfo", {})
+        debuginfo = Debuginfo(debug_data.get("input", ""), debug_data.get("output", ""))
 
         return cls(rpm, srpm, debuginfo)
 
