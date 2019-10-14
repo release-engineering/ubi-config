@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- A new field `version` in UbiConfig class.
+- GitlabLoader now populates the `UbiConfig.version` field while loading config.
+
 ### Fixed
 - LocalLoader couldn't load all config files correctly.
 
