@@ -10,18 +10,19 @@ from ubiconfig.config_types import UbiConfig
 
 from .base import Loader
 
-LOG = logging.getLogger('ubiconfig')
+LOG = logging.getLogger("ubiconfig")
 
 
 class GitlabLoader(Loader):
     """Load configuration from a remote repo on gitlab."""
+
     def __init__(self, url):
         """
         :param url: gitlab repo url in form of `https://<host>/<repo>`
         """
         self._url = url
         self._session = requests.Session()
-        self._repo_api = RepoApi(self._url.rstrip('/'))
+        self._repo_api = RepoApi(self._url.rstrip("/"))
         self._files_branch_map = self._pre_load()
 
     def load(self, file_name):
@@ -29,9 +30,10 @@ class GitlabLoader(Loader):
         :param file_name: filename that is on remote repository in any branch
         """
         # find the right branch from the mapping
-        branch = self._files_branch_map[file_name]
+        branch_sha1 = self._files_branch_map[file_name]
+        version = branch_sha1[0][3:]  # such as ubi7, ubi7.1
 
-        config_file_url = self._repo_api.get_file_content_api(file_name, branch)
+        config_file_url = self._repo_api.get_file_content_api(file_name, branch_sha1[1])
         LOG.info("Loading configuration file from remote: %s", file_name)
         response = self._session.get(config_file_url)
         response.raise_for_status()
@@ -40,16 +42,20 @@ class GitlabLoader(Loader):
         # validate input data
         validate_config(config_dict)
 
-        return UbiConfig.load_from_dict(config_dict, file_name)
+        return UbiConfig.load_from_dict(config_dict, file_name, version)
 
-    def load_all(self, recursive=False):
+    def load_all(self):
         ubi_configs = []
         for file in self._files_branch_map:
-            LOG.debug("Now loading %s from branch %s", file, self._files_branch_map[file])
+            LOG.debug(
+                "Now loading %s from branch %s", file, self._files_branch_map[file][0]
+            )
             try:
                 ubi_configs.append(self.load(file))
             except yaml.YAMLError:
-                LOG.error("%s FAILED loading because of Syntax error, Skip for now", file)
+                LOG.error(
+                    "%s FAILED loading because of Syntax error, Skip for now", file
+                )
                 continue
             except ValidationError as e:
                 LOG.error("%s FAILED schema validation:\n%s\nSkip for now", file, e)
@@ -61,19 +67,26 @@ class GitlabLoader(Loader):
         """Iterate all branches to get a mapping of {file_path: branch,...}
         """
         files_branch_map = {}
-        branches = self._get_branches()
-        LOG.info("Loading config files from all branches: %s", branches)
-        for branch in branches:
+        branch_sha1_pairs = self._get_branches()
+        LOG.info(
+            "Loading config files from all branches: %s",
+            [b[0] for b in branch_sha1_pairs],
+        )
+        for branch_sha1 in branch_sha1_pairs:
             page = 1
             while True:
-                file_list_api = self._repo_api.get_file_list_api(branch=branch,
-                                                                 page=page)
+                file_list_api = self._repo_api.get_file_list_api(
+                    branch=branch_sha1[1], page=page
+                )
                 response = self._session.get(file_list_api)
-                file_list = [file['path'] for file in response.json()
-                             if file['name'].endswith(('.yaml', '.yml'))]
+                file_list = [
+                    file["path"]
+                    for file in response.json()
+                    if file["name"].endswith((".yaml", ".yml"))
+                ]
                 for file in file_list:
-                    files_branch_map[file] = branch
-                if page >= int(response.headers.get('X-Total-Pages', 1)):
+                    files_branch_map[file] = branch_sha1
+                if page >= int(response.headers.get("X-Total-Pages", 1)):
                     break
                 page += 1
         return files_branch_map
@@ -84,6 +97,6 @@ class GitlabLoader(Loader):
         branches_list_api = self._repo_api.get_branch_list_api()
         json_response = self._session.get(branches_list_api).json()
         if not json_response:
-            raise RuntimeError('Please check %s is in right format' % self._url)
-        branches = [b['commit']['id'] for b in json_response]
-        return branches
+            raise RuntimeError("Please check %s is in right format" % self._url)
+        branch_sha1_pairs = [(b["name"], b["commit"]["id"]) for b in json_response]
+        return branch_sha1_pairs

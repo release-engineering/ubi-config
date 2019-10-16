@@ -8,8 +8,10 @@ matrix:
     dist: trusty
   - python: "2.7"
     env: TOX_ENV=py27
-  - python: "3.5"
+  - python: "3.6"
     env: TOX_ENV=static
+  - python: "3.6"
+    env: TOX_ENV=pidiff
   - python: "3.5"
     env: TOX_ENV=cov-travis DEPLOY=1
   - python: "3.5"

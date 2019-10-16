@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- A new field `version` in UbiConfig class.
+- GitlabLoader now populates the `UbiConfig.version` field while loading config.
+
+### Fixed
+- LocalLoader couldn't load all config files correctly.
+
+### Changed
+- **API break**: `recursive` option is now removed from all loaders. While using
+  LocalLoader to load all config files from a directly, it now load all config files
+  from its subdirectories automatically.
+
 ## [v1.0.2] - 2019-08-07
 
 ### Changed

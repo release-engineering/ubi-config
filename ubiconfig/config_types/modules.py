@@ -3,13 +3,14 @@
 
 class Module(object):
     """Define a single module"""
+
     def __init__(self, name, stream, profiles=None):
         self.name = name
         self.stream = str(stream)
         self.profiles = profiles
 
     def __repr__(self):
-        return '<Module: %s>' % self.name
+        return "<Module: %s>" % self.name
 
 
 class Modules(object):
@@ -45,7 +46,7 @@ class Modules(object):
         """
         include = []
 
-        for item in data.get('include', []):
+        for item in data.get("include", []):
             module = Module(**item)
             include.append(module)
 
