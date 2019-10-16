@@ -60,7 +60,7 @@ Except the above usage, there are some other use cases:
     # returns a list of UbiConfig objects
 
 
-2. Load configuration files from a directory by passing a local path:
+2. Load configuration files from a directory and all its subdirectories by passing a local path:
 
 .. code-block:: python
 
@@ -68,9 +68,6 @@ Except the above usage, there are some other use cases:
 
     local_loader = get_loader("/my/config/dir")
     config = local_loader.load("path/to/local_ubi7_config.yaml")
-
-    # or try load_all with recursive to load all available config files
-    configs = local_loader.load_all(recursive=True)
 
 
 API Reference

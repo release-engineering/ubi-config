@@ -85,15 +85,12 @@ for you.</p>
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
-<li><p>Load configuration files from a directory by passing a local path:</p></li>
+<li><p>Load configuration files from a directory and all its subdirectories by passing a local path:</p></li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ubiconfig</span> <span class="kn">import</span> <span class="n">get_loader</span>
 
 <span class="n">local_loader</span> <span class="o">=</span> <span class="n">get_loader</span><span class="p">(</span><span class="s2">&quot;/my/config/dir&quot;</span><span class="p">)</span>
 <span class="n">config</span> <span class="o">=</span> <span class="n">local_loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;path/to/local_ubi7_config.yaml&quot;</span><span class="p">)</span>
-
-<span class="c1"># or try load_all with recursive to load all available config files</span>
-<span class="n">configs</span> <span class="o">=</span> <span class="n">local_loader</span><span class="o">.</span><span class="n">load_all</span><span class="p">(</span><span class="n">recursive</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -117,7 +114,7 @@ See <a class="reference internal" href="#git-repo-format"><span class="std std-r
 <dt>local path</dt><dd><p>A path to a local directory containing UBI config files.
 See <a class="reference internal" href="#yaml-format"><span class="std std-ref">Configuration files format</span></a></p>
 </dd>
-<dt><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref any docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>If none/omitted, the value of the <code class="docutils literal notranslate"><span class="pre">DEFAULT_UBI_REPO</span></code>
+<dt><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref any docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>If none/omitted, the value of the <code class="docutils literal notranslate"><span class="pre">DEFAULT_UBI_REPO</span></code>
 environment variable is used. If this is unset, an
 exception is raised.</p>
 </dd>
@@ -141,7 +138,7 @@ when given relative paths to config files.</p>
 
 <dl class="class">
 <dt id="ubiconfig.UbiConfig">
-<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.</code><code class="sig-name descname">UbiConfig</code><span class="sig-paren">(</span><em class="sig-param">cs</em>, <em class="sig-param">pkgs</em>, <em class="sig-param">mds</em>, <em class="sig-param">file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.UbiConfig" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.</code><code class="sig-name descname">UbiConfig</code><span class="sig-paren">(</span><em class="sig-param">cs</em>, <em class="sig-param">pkgs</em>, <em class="sig-param">mds</em>, <em class="sig-param">file_name</em>, <em class="sig-param">version</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.UbiConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrap all UBI related configurations
 Examples to access different configurations:</p>
 <dl class="simple">
@@ -166,7 +163,7 @@ config.content_sets.debuginfo.output</p>
 </dl>
 <dl class="method">
 <dt id="ubiconfig.UbiConfig.load_from_dict">
-<em class="property">classmethod </em><code class="sig-name descname">load_from_dict</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.UbiConfig.load_from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">load_from_dict</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">file_name</em>, <em class="sig-param">version=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.UbiConfig.load_from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create new instance of UbiConfig and load it from provided dictonary with
 following format:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -203,11 +200,9 @@ git repo or local directory).</p>
 
 <dl class="method">
 <dt id="ubiconfig.Loader.load_all">
-<code class="sig-name descname">load_all</code><span class="sig-paren">(</span><em class="sig-param">recursive=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.Loader.load_all" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.Loader.load_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the list of config files from repo and call load on every file.
 Return a list of <a class="reference internal" href="#ubiconfig.UbiConfig" title="ubiconfig.UbiConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">UbiConfig</span></code></a> objects.</p>
-<p>If recursive is set, it will walk through the submodules, no matter local
-or remote</p>
 </dd></dl>
 
 </dd></dl>
@@ -221,9 +216,9 @@ or remote</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>include</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – list of packages to whitelist</p></li>
-<li><p><strong>exclude</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – list of packages to blacklist</p></li>
-<li><p><strong>arches</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – list of arches of packages in whitelist and blacklist</p></li>
+<li><p><strong>include</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of packages to whitelist</p></li>
+<li><p><strong>exclude</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of packages to blacklist</p></li>
+<li><p><strong>arches</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of arches of packages in whitelist and blacklist</p></li>
 </ul>
 </dd>
 </dl>
@@ -238,7 +233,7 @@ or remote</p>
 <dd><p>group of modules</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>include</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – a list of <a class="reference internal" href="#ubiconfig.config_types.modules.Module" title="ubiconfig.config_types.modules.Module"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a> instances</p>
+<dd class="field-odd"><p><strong>include</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – a list of <a class="reference internal" href="#ubiconfig.config_types.modules.Module" title="ubiconfig.config_types.modules.Module"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a> instances</p>
 </dd>
 </dl>
 <dl class="method">
@@ -247,7 +242,7 @@ or remote</p>
 <dd><p>Create instances of <a class="reference internal" href="#ubiconfig.config_types.modules.Modules" title="ubiconfig.config_types.modules.Modules"><code class="xref py py-class docutils literal notranslate"><span class="pre">Modules</span></code></a> from a dictionary</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – dictionary with data of following format</p>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – dictionary with data of following format</p>
 </dd>
 </dl>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;include&quot;</span><span class="p">:</span> <span class="p">[</span>
@@ -291,7 +286,7 @@ or remote</p>
 <dd><p>Create instances of <a class="reference internal" href="#ubiconfig.config_types.content_sets.ContentSetsMapping" title="ubiconfig.config_types.content_sets.ContentSetsMapping"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContentSetsMapping</span></code></a> from a dictionary</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – dictionary with data of following format</p>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – dictionary with data of following format</p>
 </dd>
 </dl>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -402,11 +397,11 @@ it has to be have following structure:</p>
 <hr />
 <ul>
     
+    <li class="toctree-l1"><a href="genindex.html">Index</a></li>
+    
     <li class="toctree-l1"><a href="https://pypi.org/project/ubi-config">PyPI</a></li>
     
     <li class="toctree-l1"><a href="https://github.com/release-engineering/ubi-config">Source</a></li>
-    
-    <li class="toctree-l1"><a href="genindex.html">Index</a></li>
     
 </ul>
 <div class="relations">
