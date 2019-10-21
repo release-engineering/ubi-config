@@ -30,20 +30,20 @@ def ubi7_1_config_file():
 @pytest.fixture
 def ubi7_config_file():
     with open(
-        os.path.join(TEST_DATA_DIR, "configs/ubi7/rhel-7-for-power-le.yaml")
+        os.path.join(TEST_DATA_DIR, "configs/ubi8/rhel-8-for-power-le.yaml")
     ) as f:
         yield f
 
 
 @pytest.fixture
 def invalid_config_file():
-    with open(os.path.join(TEST_DATA_DIR, "bad_configs/invalid_config.yaml")) as f:
+    with open(os.path.join(TEST_DATA_DIR, "bad_configs/ubi7/invalid_config.yaml")) as f:
         yield f
 
 
 @pytest.fixture
 def syntax_error_file():
-    with open(os.path.join(TEST_DATA_DIR, "bad_configs/syntax_error.yaml")) as f:
+    with open(os.path.join(TEST_DATA_DIR, "bad_configs/ubi7/syntax_error.yaml")) as f:
         yield f
 
 
@@ -153,7 +153,7 @@ def test_load_local_failed_validation():
     loader = ubi.get_loader(TEST_DATA_DIR)
 
     with pytest.raises(ValidationError):
-        loader.load("bad_configs/invalid_config.yaml")
+        loader.load("bad_configs/ubi7/invalid_config.yaml")
 
 
 def test_load_all_from_local():
@@ -161,6 +161,7 @@ def test_load_all_from_local():
     loader = ubi.get_loader(repo)
     configs = loader.load_all()
     assert len(configs) == 1
+    assert configs[0].version == "7.1"
     assert isinstance(configs[0], UbiConfig)
 
 
@@ -177,6 +178,12 @@ def test_load_all_from_local_recursive():
     configs = loader.load_all()
     assert len(configs) == 2
     assert isinstance(configs[0], UbiConfig)
+    for conf in configs:
+        # version should be populated
+        assert hasattr(conf, "version")
+        if conf.file_name == "rhel-8-for-power-le.yaml":
+            # it's under ubi8 directory, version should be 8
+            assert conf.version == "8"
 
 
 def test_get_loader_notexist(tmpdir):

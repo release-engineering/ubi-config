@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Fix LocalLoader couldn't populate version field, now it populates the version field
+  based on directory name
+
 ## [v2.0.0] - 2019-10-16
 
 ### Added
