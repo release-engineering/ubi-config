@@ -1,0 +1,52 @@
+content_sets:
+  # This defines the mapping between UBI content sets and underlying content sets
+  rpm:
+    output: ubi-7-server-rpms
+    input: rhel-7-server-rpms
+  srpm:
+    output: ubi-7-server-source-rpms
+    input: rhel-7-server-source-rpms
+  debuginfo:
+    output: ubi-7-server-debug-rpms
+    input: rhel-7-server-debug-rpms
+
+arches:
+ - src
+ - x86_64
+packages:
+  include:
+  - GConf2.*
+  - GConf2-debuginfo.*
+  - GeoIP.*
+  - GeoIP-debuginfo.*
+  - ImageMagick.*
+  - ImageMagick-debuginfo.*
+  - MySQL-python.*
+  - MySQL-python-debuginfo.*
+  - OpenEXR.src
+  - OpenEXR-debuginfo.*
+  - OpenEXR-libs.*
+  - PyYAML.*
+  - PyYAML-debuginfo.*
+  - acl.*
+  - acl-debuginfo.*
+  - adobe-mappings-cmap.*
+  - adobe-mappings-cmap-deprecated.*
+  - adobe-mappings-pdf.*
+  - alsa-lib.*
+  - alsa-lib-debuginfo.*
+  - apr.*
+  # Blacklist of packages to exclude
+  exclude:
+  - kernel
+  - kernel-doc
+  - kmod-kvdo
+  - kernel.src
+  - kernel-debug-debuginfo
+  - kernel-debuginfo
+  - kernel-debuginfo-common-aarch64
+  - kernel-debuginfo-common-ppc64le
+  - kernel-debuginfo-common-s390x
+  - kernel-debuginfo-common-x86_64
+  - kernel-tools-debuginfo
+  - linux-firmware

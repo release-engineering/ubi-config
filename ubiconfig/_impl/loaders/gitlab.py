@@ -23,18 +23,37 @@ class GitlabLoader(Loader):
         self._url = url
         self._session = requests.Session()
         self._repo_api = RepoApi(self._url.rstrip("/"))
+        self._branches = self._get_branches()
         self._files_branch_map = self._pre_load()
 
-    def load(self, file_name):
+    def load(self, file_name, version=None):
         """ Load file from remote repository.
         :param file_name: filename that is on remote repository in any branch
         """
-        # find the right branch from the mapping
-        branch_sha1 = self._files_branch_map[file_name]
-        version = branch_sha1[0][3:]  # such as ubi7, ubi7.1
+        if file_name not in self._files_branch_map:
+            raise ValueError("Couldn't find file %s in remote repo" % file_name)
 
-        config_file_url = self._repo_api.get_file_content_api(file_name, branch_sha1[1])
-        LOG.info("Loading configuration file from remote: %s", file_name)
+        sha1 = self._branches.get(version)
+        if version and not sha1:
+            LOG.warning(
+                "Didn't find version %s, will try to find %s in default",
+                version,
+                file_name,
+            )
+
+        if not version or not sha1:
+            # branch is not available from the wanted version or not specified,
+            # use the default version.
+            for branch_sha1 in self._files_branch_map[file_name]:
+                if branch_sha1[0] == "ubi7":
+                    version = "ubi7"
+                    break
+            else:
+                version = "ubi8"
+            sha1 = self._branches[version]
+
+        LOG.info("Loading config file %s from branch %s", file_name, version)
+        config_file_url = self._repo_api.get_file_content_api(file_name, sha1)
         response = self._session.get(config_file_url)
         response.raise_for_status()
 
@@ -42,61 +61,63 @@ class GitlabLoader(Loader):
         # validate input data
         validate_config(config_dict)
 
-        return UbiConfig.load_from_dict(config_dict, file_name, version)
+        return UbiConfig.load_from_dict(config_dict, file_name, version[3:])
 
     def load_all(self):
         ubi_configs = []
-        for file in self._files_branch_map:
-            LOG.debug(
-                "Now loading %s from branch %s", file, self._files_branch_map[file][0]
-            )
-            try:
-                ubi_configs.append(self.load(file))
-            except yaml.YAMLError:
-                LOG.error(
-                    "%s FAILED loading because of Syntax error, Skip for now", file
-                )
-                continue
-            except ValidationError as e:
-                LOG.error("%s FAILED schema validation:\n%s\nSkip for now", file, e)
-                continue
+        for f in self._files_branch_map:
+            for branch_sha1 in self._files_branch_map[f]:
+                LOG.debug("Now loading %s from branch %s", f, branch_sha1[0])
+                try:
+                    ubi_configs.append(self.load(f, branch_sha1[0]))
+                except yaml.YAMLError:
+                    LOG.error(
+                        "%s FAILED loading because of Syntax error, Skip for now", f
+                    )
+                    continue
+                except ValidationError as e:
+                    LOG.error("%s FAILED schema validation:\n%s\nSkip for now", f, e)
+                    continue
 
         return ubi_configs
 
     def _pre_load(self):
-        """Iterate all branches to get a mapping of {file_path: branch,...}
+        """Iterate all branches to get a mapping of {file_path: (branch, sha1)...}
         """
         files_branch_map = {}
-        branch_sha1_pairs = self._get_branches()
-        LOG.info(
-            "Loading config files from all branches: %s",
-            [b[0] for b in branch_sha1_pairs],
-        )
-        for branch_sha1 in branch_sha1_pairs:
+
+        LOG.debug("Loading config files from all branches")
+
+        for branch, sha1 in self._branches.items():
             page = 1
             while True:
-                file_list_api = self._repo_api.get_file_list_api(
-                    branch=branch_sha1[1], page=page
-                )
+                file_list_api = self._repo_api.get_file_list_api(branch=sha1, page=page)
                 response = self._session.get(file_list_api)
                 file_list = [
-                    file["path"]
-                    for file in response.json()
-                    if file["name"].endswith((".yaml", ".yml"))
+                    f["path"]
+                    for f in response.json()
+                    if f["name"].endswith((".yaml", ".yml"))
                 ]
-                for file in file_list:
-                    files_branch_map[file] = branch_sha1
+                for f in file_list:
+                    files_branch_map.setdefault(f, []).append((branch, sha1))
+                    # now the map is {filename: [(branch1, sha1), (branch2, sha1),...]}
+                    # same file name could map to multiple config files.
                 if page >= int(response.headers.get("X-Total-Pages", 1)):
                     break
                 page += 1
+
         return files_branch_map
 
     def _get_branches(self):
-        """Get all the branches of a given repo"""
+        """Get a {branch: sha1} mapping for all branches of a given repo"""
+        branch_sha1 = {}
+
         LOG.info("Getting branches of the repo")
         branches_list_api = self._repo_api.get_branch_list_api()
         json_response = self._session.get(branches_list_api).json()
         if not json_response:
             raise RuntimeError("Please check %s is in right format" % self._url)
-        branch_sha1_pairs = [(b["name"], b["commit"]["id"]) for b in json_response]
-        return branch_sha1_pairs
+        for b in json_response:
+            branch_sha1[b["name"]] = b["commit"]["id"]
+
+        return branch_sha1
