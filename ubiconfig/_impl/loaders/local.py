@@ -24,6 +24,9 @@ class LocalLoader(object):
         self._isroot = False
         # when load_all is called, the path returned includes self._path, no
         # need to join again.
+        self._current_version = os.path.basename(self._path.rstrip("/"))
+        # set the current version to the last part of path, e.g. /configs/ubi7,
+        # the current version is ubi7
 
     def load(self, file_name):
         """Load a config file from local.
@@ -43,7 +46,9 @@ class LocalLoader(object):
         # validate input data
         validate_config(config_dict)
 
-        return UbiConfig.load_from_dict(config_dict, file_name)
+        return UbiConfig.load_from_dict(
+            config_dict, file_name, self._current_version[3:]
+        )
 
     def load_all(self):
         """Load all config file from a local directory and all its subdirectories"""
@@ -51,31 +56,42 @@ class LocalLoader(object):
         ubi_configs = []
         self._isroot = True
 
-        file_list = self._get_local_file_list()
-        for file in file_list:
-            LOG.debug("Now loading %s", file)
-            try:
-                ubi_configs.append(self.load(file))
-            except yaml.YAMLError:
-                LOG.error(
-                    "%s FAILED loading because of Syntax error, Skip for now", file
-                )
-                continue
-            except ValidationError as e:
-                LOG.error("%s FAILED schema validation:\n%s\nSkip for now", file, e)
-                continue
+        ver_files_map = self._get_local_files_mapping()
+        current_version = self._current_version
+
+        for version, files in ver_files_map.items():
+            self._current_version = version
+            for f in files:
+                LOG.debug("Now loading %s", f)
+                try:
+                    ubi_configs.append(self.load(f))
+                except yaml.YAMLError:
+                    LOG.error(
+                        "%s FAILED loading because of Syntax error, Skip for now", f
+                    )
+                    continue
+                except ValidationError as e:
+                    LOG.error("%s FAILED schema validation:\n%s\nSkip for now", f, e)
+                    continue
+
         self._isroot = False
+        self._current_version = current_version
+        # restore _isroot and _current_version so the loader can be used again.
 
         return ubi_configs
 
-    def _get_local_file_list(self):
+    def _get_local_files_mapping(self):
         """Get the config file list from local."""
         LOG.info("Getting the local config file list")
-        file_list = []
+        ver_files_map = {}
         for root, _, files in os.walk(self._path):
-            files = [
+            conf_files = [
                 os.path.join(root, f) for f in files if f.endswith((".yaml", ".yml"))
             ]
-            file_list.extend(files)
+            if conf_files:
+                # if there's yaml files, then it must under some version directory
+                version = os.path.basename(root)
+                ver_files_map[version] = conf_files
+                # the result map is as {'version': ['file1', 'file2', ..]}
 
-        return file_list
+        return ver_files_map
