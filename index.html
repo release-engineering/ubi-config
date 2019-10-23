@@ -191,11 +191,13 @@ following format:</p>
 use the <a class="reference internal" href="#ubiconfig.get_loader" title="ubiconfig.get_loader"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_loader()</span></code></a> function.</p>
 <dl class="method">
 <dt id="ubiconfig.Loader.load">
-<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param">file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.Loader.load" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param">file_name</em>, <em class="sig-param">version=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.Loader.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a single configuration file and return a <a class="reference internal" href="#ubiconfig.UbiConfig" title="ubiconfig.UbiConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">UbiConfig</span></code></a> object.</p>
 <p>The given file_name should be a relative path to a YAML file
 in the loader’s config source (e.g. relative path to file within a
 git repo or local directory).</p>
+<p>version is an option argument to specify the version of config file to load,
+if it’s None, then use default, e.g. ubi7, ubi8</p>
 </dd></dl>
 
 <dl class="method">
@@ -397,11 +399,11 @@ it has to be have following structure:</p>
 <hr />
 <ul>
     
-    <li class="toctree-l1"><a href="https://github.com/release-engineering/ubi-config">Source</a></li>
+    <li class="toctree-l1"><a href="https://pypi.org/project/ubi-config">PyPI</a></li>
     
     <li class="toctree-l1"><a href="genindex.html">Index</a></li>
     
-    <li class="toctree-l1"><a href="https://pypi.org/project/ubi-config">PyPI</a></li>
+    <li class="toctree-l1"><a href="https://github.com/release-engineering/ubi-config">Source</a></li>
     
 </ul>
 <div class="relations">
