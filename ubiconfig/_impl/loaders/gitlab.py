@@ -31,13 +31,16 @@ class GitlabLoader(Loader):
         :param file_name: filename that is on remote repository in any branch
         """
         if file_name not in self._files_branch_map:
-            raise ValueError("Couldn't find file %s in remote repo" % file_name)
+            raise ValueError(
+                "Couldn't find file %s from remote repo %s" % (file_name, self._url)
+            )
 
         sha1 = self._branches.get(version)
         if version and not sha1:
             LOG.warning(
-                "Didn't find version %s, will try to find %s in default",
+                "Couldn't find version %s from %s, will try to find %s in default",
                 version,
+                self._url,
                 file_name,
             )
 
@@ -72,7 +75,7 @@ class GitlabLoader(Loader):
                     ubi_configs.append(self.load(f, branch_sha1[0]))
                 except yaml.YAMLError:
                     LOG.error(
-                        "%s FAILED loading because of Syntax error, Skip for now", f
+                        "%s FAILED loading because of Syntax error, skipping for now", f
                     )
                     continue
                 except ValidationError as e:
@@ -93,6 +96,7 @@ class GitlabLoader(Loader):
             while True:
                 file_list_api = self._repo_api.get_file_list_api(branch=sha1, page=page)
                 response = self._session.get(file_list_api)
+                response.raise_for_status()
                 file_list = [
                     f["path"]
                     for f in response.json()
