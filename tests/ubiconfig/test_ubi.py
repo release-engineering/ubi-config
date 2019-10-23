@@ -75,18 +75,25 @@ def branches():
 
 @pytest.fixture
 def files_branch_map():
-    return {
-        "rhel-atomic-host.yaml": [
-            ("ubi7.1", "2189cbc2e447f796fe354f8d784d76b0a2620248")
-        ],
-        "rhel-8-for-power-le.yaml": [
-            ("ubi8", "26d24af7859df3c4d361bd33cd57984d03abe206")
-        ],
-        "rhel-7-server.yaml": [
-            ("ubi7.1", "2189cbc2e447f796fe354f8d784d76b0a2620248"),
-            ("ubi7", "c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f"),
-        ],
-    }
+    return OrderedDict(
+        [
+            (
+                "rhel-atomic-host.yaml",
+                [("ubi7.1", "2189cbc2e447f796fe354f8d784d76b0a2620248")],
+            ),
+            (
+                "rhel-8-for-power-le.yaml",
+                [("ubi8", "26d24af7859df3c4d361bd33cd57984d03abe206")],
+            ),
+            (
+                "rhel-7-server.yaml",
+                [
+                    ("ubi7.1", "2189cbc2e447f796fe354f8d784d76b0a2620248"),
+                    ("ubi7", "c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f"),
+                ],
+            ),
+        ]
+    )
 
 
 @pytest.fixture
@@ -273,6 +280,35 @@ def test_load_file_without_providing_version(
 @patch("requests.Session")
 @patch("ubiconfig._impl.loaders._GitlabLoader._pre_load")
 @patch("ubiconfig._impl.loaders._GitlabLoader._get_branches")
+def test_load_file_with_wanted_version(
+    mocked_get_branches,
+    mocked_pre_load,
+    mocked_session,
+    branches,
+    files_branch_map,
+    ubi7_config_file,
+    ubi8_config_file,
+    response,
+):
+
+    mocked_get_branches.return_value = branches
+    mocked_pre_load.return_value = files_branch_map
+    mocked_session.return_value.get.side_effect = [
+        response(ubi7_config_file),
+        response(ubi8_config_file),
+    ]
+
+    loader = ubi.get_loader()
+    config = loader.load("rhel-7-server.yaml", "ubi7.1")
+    assert config.version == "7.1"
+
+    config = loader.load("rhel-8-for-power-le.yaml", "ubi8")
+    assert config.version == "8"
+
+
+@patch("requests.Session")
+@patch("ubiconfig._impl.loaders._GitlabLoader._pre_load")
+@patch("ubiconfig._impl.loaders._GitlabLoader._get_branches")
 def test_load_file_with_non_exists_version(
     mocked_get_branches,
     mocked_pre_load,
@@ -332,8 +368,8 @@ def test_get_empty_branches(mocked_session):
 
 
 @patch("requests.Session")
-def test_get_branches(mocked_session):
-    branches = [
+def test_get_branches(mocked_session, branches):
+    remote_branches = [
         {"name": "ubi7", "commit": {"id": "c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f"}},
         {
             "name": "ubi7.1",
@@ -343,14 +379,10 @@ def test_get_branches(mocked_session):
     ]
     headers = {"Content-Length": "629", "X-Total-Pages": "1", "X-Per-Page": "20"}
     mocked_session.return_value.get.return_value.headers = headers
-    mocked_session.return_value.get.return_value.json.return_value = branches
+    mocked_session.return_value.get.return_value.json.return_value = remote_branches
     loader = ubi.get_loader()
     actual_branches_sha1 = loader._get_branches()
-    assert actual_branches_sha1 == {
-        "ubi7": "c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f",
-        "ubi7.1": "2189cbc2e447f796fe354f8d784d76b0a2620248",
-        "ubi8": "26d24af7859df3c4d361bd33cd57984d03abe206",
-    }
+    assert actual_branches_sha1 == branches
 
 
 @patch("requests.Session")
