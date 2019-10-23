@@ -24,16 +24,27 @@ class LocalLoader(object):
         self._isroot = False
         # when load_all is called, the path returned includes self._path, no
         # need to join again.
-        self._current_version = os.path.basename(self._path.rstrip("/"))
-        # set the current version to the last part of path, e.g. /configs/ubi7,
-        # the current version is ubi7
+        self._ver_files_map = self._get_local_files_map()
+        # a {version: [file]} map
 
-    def load(self, file_name):
+    def load(self, file_name, version=None):
         """Load a config file from local.
 
         Args:
-            file_name (str): file name of the config file.
+            file_name (str): path to the config file.
+
+            version(str):
+                The version usage here is a little different from the remote loader,
+                it's only used to denote the version of config file, but in remote
+                loader, it's also used to find the right config.
+
+                If version is None, we should get it from its path.
         """
+        if version is None:
+            # get version form path, such as configs/ubi7.1/config.yaml, get
+            # ubi7.1
+            version = os.path.basename(os.path.dirname(file_name))
+
         if not self._isroot:
             file_path = os.path.join(self._path, file_name)
         else:
@@ -46,9 +57,7 @@ class LocalLoader(object):
         # validate input data
         validate_config(config_dict)
 
-        return UbiConfig.load_from_dict(
-            config_dict, file_name, self._current_version[3:]
-        )
+        return UbiConfig.load_from_dict(config_dict, file_name, version[3:])
 
     def load_all(self):
         """Load all config file from a local directory and all its subdirectories"""
@@ -56,15 +65,11 @@ class LocalLoader(object):
         ubi_configs = []
         self._isroot = True
 
-        ver_files_map = self._get_local_files_mapping()
-        current_version = self._current_version
-
-        for version, files in ver_files_map.items():
-            self._current_version = version
+        for version, files in self._ver_files_map.items():
             for f in files:
                 LOG.debug("Now loading %s", f)
                 try:
-                    ubi_configs.append(self.load(f))
+                    ubi_configs.append(self.load(f, version))
                 except yaml.YAMLError:
                     LOG.error(
                         "%s FAILED loading because of Syntax error, Skip for now", f
@@ -75,12 +80,11 @@ class LocalLoader(object):
                     continue
 
         self._isroot = False
-        self._current_version = current_version
-        # restore _isroot and _current_version so the loader can be used again.
+        # restore _isroot so the loader can be used again.
 
         return ubi_configs
 
-    def _get_local_files_mapping(self):
+    def _get_local_files_map(self):
         """Get the config file list from local."""
         LOG.info("Getting the local config file list")
         ver_files_map = {}
@@ -91,7 +95,7 @@ class LocalLoader(object):
             if conf_files:
                 # if there's yaml files, then it must under some version directory
                 version = os.path.basename(root)
-                ver_files_map[version] = conf_files
+                ver_files_map.setdefault(version, []).extend(conf_files)
                 # the result map is as {'version': ['file1', 'file2', ..]}
 
         return ver_files_map

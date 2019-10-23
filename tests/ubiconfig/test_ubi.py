@@ -1,5 +1,10 @@
 import os
 
+try:
+    from collections import OrderedDict
+except ImportError:
+    from ordereddict import OrderedDict
+
 import pytest
 from mock import patch
 import yaml
@@ -22,13 +27,25 @@ class FakeResponse:
 
 
 @pytest.fixture
-def ubi7_1_config_file():
+def ubi7_1_config_file1():
     with open(os.path.join(TEST_DATA_DIR, "configs/ubi7.1/rhel-atomic-host.yaml")) as f:
         yield f
 
 
 @pytest.fixture
+def ubi7_1_config_file2():
+    with open(os.path.join(TEST_DATA_DIR, "configs/ubi7.1/rhel-7-server.yaml")) as f:
+        yield f
+
+
+@pytest.fixture
 def ubi7_config_file():
+    with open(os.path.join(TEST_DATA_DIR, "configs/ubi7/rhel-7-server.yaml")) as f:
+        yield f
+
+
+@pytest.fixture
+def ubi8_config_file():
     with open(
         os.path.join(TEST_DATA_DIR, "configs/ubi8/rhel-8-for-power-le.yaml")
     ) as f:
@@ -48,21 +65,42 @@ def syntax_error_file():
 
 
 @pytest.fixture
-def files_branch_map():
+def branches():
     return {
-        "rhel-atomic-host.yaml": ("ubi7", "c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f"),
-        "rhel-7-for-power-le.yaml": (
-            "ubi7.1",
-            "2189cbc2e447f796fe354f8d784d76b0a2620248",
-        ),
+        "ubi7.1": "2189cbc2e447f796fe354f8d784d76b0a2620248",
+        "ubi7": "c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f",
+        "ubi8": "26d24af7859df3c4d361bd33cd57984d03abe206",
     }
+
+
+@pytest.fixture
+def files_branch_map():
+    return OrderedDict(
+        [
+            (
+                "rhel-atomic-host.yaml",
+                [("ubi7.1", "2189cbc2e447f796fe354f8d784d76b0a2620248")],
+            ),
+            (
+                "rhel-8-for-power-le.yaml",
+                [("ubi8", "26d24af7859df3c4d361bd33cd57984d03abe206")],
+            ),
+            (
+                "rhel-7-server.yaml",
+                [
+                    ("ubi7.1", "2189cbc2e447f796fe354f8d784d76b0a2620248"),
+                    ("ubi7", "c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f"),
+                ],
+            ),
+        ]
+    )
 
 
 @pytest.fixture
 def files_branch_map_with_error_config_file(files_branch_map):
     result_map = {
-        "invaild_config.yaml": ("ubi7", "c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f"),
-        "syntax_error.yaml": ("ubi7.1", "c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f"),
+        "invaild_config.yaml": [("ubi7", "c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f")],
+        "syntax_error.yaml": [("ubi7.1", "2189cbc2e447f796fe354f8d784d76b0a2620248")],
     }
     result_map.update(files_branch_map)
     return result_map
@@ -78,43 +116,59 @@ def response():
 
 @patch("requests.Session")
 @patch("ubiconfig._impl.loaders._GitlabLoader._pre_load")
+@patch("ubiconfig._impl.loaders._GitlabLoader._get_branches")
 def test_load_all_from_default_repo(
+    mocked_get_branches,
     mocked_pre_load,
     mocked_session,
+    branches,
     files_branch_map,
-    ubi7_1_config_file,
+    ubi7_1_config_file1,
+    ubi7_1_config_file2,
     ubi7_config_file,
+    ubi8_config_file,
     response,
 ):
+    mocked_get_branches.return_value = branches
     mocked_pre_load.return_value = files_branch_map
     mocked_session.return_value.get.side_effect = [
-        response(ubi7_1_config_file),
+        response(ubi7_1_config_file1),
+        response(ubi8_config_file),
+        response(ubi7_1_config_file2),
         response(ubi7_config_file),
     ]
     loader = ubi.get_loader()
     configs = loader.load_all()
     configs = sorted(configs, key=repr)
-    assert len(configs) == 2
+    assert len(configs) == 4
     assert isinstance(configs[0], UbiConfig)
-    assert str(configs[1]) == "rhel-atomic-host.yaml"
+    assert str(configs[1]) == "rhel-7-server.yaml"
     assert configs[1].version == "7"
 
 
 @patch("requests.Session")
 @patch("ubiconfig._impl.loaders._GitlabLoader._pre_load")
+@patch("ubiconfig._impl.loaders._GitlabLoader._get_branches")
 def test_load_all_with_error_config(
+    mocked_get_branches,
     mocked_pre_load,
     mocked_session,
-    ubi7_1_config_file,
+    branches,
+    ubi7_1_config_file1,
+    ubi7_1_config_file2,
     ubi7_config_file,
+    ubi8_config_file,
     invalid_config_file,
     syntax_error_file,
     response,
     files_branch_map_with_error_config_file,
 ):
+    mocked_get_branches.return_value = branches
     mocked_pre_load.return_value = files_branch_map_with_error_config_file
     mocked_session.return_value.get.side_effect = [
-        response(ubi7_1_config_file),
+        response(ubi7_1_config_file1),
+        response(ubi8_config_file),
+        response(ubi7_1_config_file2),
         response(ubi7_config_file),
         response(invalid_config_file),
         response(syntax_error_file),
@@ -122,8 +176,8 @@ def test_load_all_with_error_config(
 
     loader = ubi.get_loader()
     configs = loader.load_all()
-    assert mocked_session.return_value.get.call_count == 4
-    assert len(configs) == 2
+    assert mocked_session.return_value.get.call_count == 6
+    assert len(configs) == 4
 
 
 def test_load_from_local():
@@ -131,6 +185,7 @@ def test_load_from_local():
     # loads relative to given path
     config = loader.load("configs/ubi7.1/rhel-atomic-host.yaml")
     assert isinstance(config, UbiConfig)
+    assert config.version == "7.1"
 
 
 def test_load_from_local_decimal_integrity():
@@ -160,7 +215,7 @@ def test_load_all_from_local():
     repo = os.path.join(TEST_DATA_DIR, "configs/ubi7.1")
     loader = ubi.get_loader(repo)
     configs = loader.load_all()
-    assert len(configs) == 1
+    assert len(configs) == 2
     assert configs[0].version == "7.1"
     assert isinstance(configs[0], UbiConfig)
 
@@ -169,14 +224,14 @@ def test_load_all_from_local_with_error_configs():
     loader = ubi.get_loader(TEST_DATA_DIR)
     configs = loader.load_all()
 
-    assert len(configs) == 2
+    assert len(configs) == 4
 
 
 def test_load_all_from_local_recursive():
     repo = os.path.join(TEST_DATA_DIR, "configs")
     loader = ubi.get_loader(repo)
     configs = loader.load_all()
-    assert len(configs) == 2
+    assert len(configs) == 4
     assert isinstance(configs[0], UbiConfig)
     for conf in configs:
         # version should be populated
@@ -184,6 +239,94 @@ def test_load_all_from_local_recursive():
         if conf.file_name == "rhel-8-for-power-le.yaml":
             # it's under ubi8 directory, version should be 8
             assert conf.version == "8"
+
+
+@patch("requests.Session")
+@patch("ubiconfig._impl.loaders._GitlabLoader._pre_load")
+@patch("ubiconfig._impl.loaders._GitlabLoader._get_branches")
+def test_load_file_non_exists_from_remote(
+    mocked_get_branches, mocked_pre_load, mocked_session, branches, files_branch_map
+):
+    mocked_get_branches.return_value = branches
+    mocked_pre_load.return_value = files_branch_map
+
+    with pytest.raises(ValueError):
+        ubi.get_loader().load("non-exists.yaml")
+
+
+@patch("requests.Session")
+@patch("ubiconfig._impl.loaders._GitlabLoader._pre_load")
+@patch("ubiconfig._impl.loaders._GitlabLoader._get_branches")
+def test_load_file_without_providing_version(
+    mocked_get_branches,
+    mocked_pre_load,
+    mocked_session,
+    branches,
+    files_branch_map,
+    ubi7_config_file,
+    response,
+):
+
+    mocked_get_branches.return_value = branches
+    mocked_pre_load.return_value = files_branch_map
+    mocked_session.return_value.get.side_effect = [response(ubi7_config_file)]
+
+    loader = ubi.get_loader()
+    config = loader.load("rhel-7-server.yaml")
+
+    assert config.version == "7"
+
+
+@patch("requests.Session")
+@patch("ubiconfig._impl.loaders._GitlabLoader._pre_load")
+@patch("ubiconfig._impl.loaders._GitlabLoader._get_branches")
+def test_load_file_with_wanted_version(
+    mocked_get_branches,
+    mocked_pre_load,
+    mocked_session,
+    branches,
+    files_branch_map,
+    ubi7_config_file,
+    ubi8_config_file,
+    response,
+):
+
+    mocked_get_branches.return_value = branches
+    mocked_pre_load.return_value = files_branch_map
+    mocked_session.return_value.get.side_effect = [
+        response(ubi7_config_file),
+        response(ubi8_config_file),
+    ]
+
+    loader = ubi.get_loader()
+    config = loader.load("rhel-7-server.yaml", "ubi7.1")
+    assert config.version == "7.1"
+
+    config = loader.load("rhel-8-for-power-le.yaml", "ubi8")
+    assert config.version == "8"
+
+
+@patch("requests.Session")
+@patch("ubiconfig._impl.loaders._GitlabLoader._pre_load")
+@patch("ubiconfig._impl.loaders._GitlabLoader._get_branches")
+def test_load_file_with_non_exists_version(
+    mocked_get_branches,
+    mocked_pre_load,
+    mocked_session,
+    branches,
+    files_branch_map,
+    ubi8_config_file,
+    response,
+):
+
+    mocked_get_branches.return_value = branches
+    mocked_pre_load.return_value = files_branch_map
+    mocked_session.return_value.get.side_effect = [response(ubi8_config_file)]
+
+    loader = ubi.get_loader()
+    config = loader.load("rhel-8-for-power-le.yaml", "ubi8.20")
+
+    assert config.version == "8"
 
 
 def test_get_loader_notexist(tmpdir):
@@ -225,41 +368,44 @@ def test_get_empty_branches(mocked_session):
 
 
 @patch("requests.Session")
-def test_get_branches(mocked_session):
-    branches = [
+def test_get_branches(mocked_session, branches):
+    remote_branches = [
         {"name": "ubi7", "commit": {"id": "c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f"}},
         {
             "name": "ubi7.1",
             "commit": {"id": "2189cbc2e447f796fe354f8d784d76b0a2620248"},
         },
+        {"name": "ubi8", "commit": {"id": "26d24af7859df3c4d361bd33cd57984d03abe206"}},
     ]
     headers = {"Content-Length": "629", "X-Total-Pages": "1", "X-Per-Page": "20"}
     mocked_session.return_value.get.return_value.headers = headers
-    mocked_session.return_value.get.return_value.json.return_value = branches
+    mocked_session.return_value.get.return_value.json.return_value = remote_branches
     loader = ubi.get_loader()
     actual_branches_sha1 = loader._get_branches()
-    assert actual_branches_sha1 == [
-        ("ubi7", "c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f"),
-        ("ubi7.1", "2189cbc2e447f796fe354f8d784d76b0a2620248"),
-    ]
+    assert actual_branches_sha1 == branches
 
 
 @patch("requests.Session")
 @patch("ubiconfig._impl.loaders._GitlabLoader._get_branches")
 def test_pre_load(mocked_get_branches, mocked_session, files_branch_map):
-    branch_sha1_pairs = [
-        ("ubi7", "c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f"),
-        ("ubi7.1", "2189cbc2e447f796fe354f8d784d76b0a2620248"),
-    ]
-    mocked_get_branches.return_value = branch_sha1_pairs
+    branch_sha1 = OrderedDict(
+        [
+            ("ubi7.1", "2189cbc2e447f796fe354f8d784d76b0a2620248"),
+            ("ubi7", "c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f"),
+            ("ubi8", "26d24af7859df3c4d361bd33cd57984d03abe206"),
+        ]
+    )
+    mocked_get_branches.return_value = branch_sha1
     headers = {"Content-Length": "629", "X-Total-Pages": "1", "X-Per-Page": "20"}
     mocked_session.return_value.get.return_value.headers = headers
     file_list = [
         [
+            {"name": "rhel-7-server.yaml", "path": "rhel-7-server.yaml"},
             {"name": "rhel-atomic-host.yaml", "path": "rhel-atomic-host.yaml"},
             {"name": "README.md", "path": "README.md"},
         ],
-        [{"name": "rhel-7-for-power-le.yaml", "path": "rhel-7-for-power-le.yaml"}],
+        [{"name": "rhel-7-server.yaml", "path": "rhel-7-server.yaml"}],
+        [{"name": "rhel-8-for-power-le.yaml", "path": "rhel-8-for-power-le.yaml"}],
     ]
     mocked_session.return_value.get.return_value.json.side_effect = file_list
     loader = ubi.get_loader()
@@ -268,8 +414,8 @@ def test_pre_load(mocked_get_branches, mocked_session, files_branch_map):
     assert expected_map == actual_files_branch_map
 
 
-def test_ubi_config(ubi7_1_config_file):
-    config_dict = yaml.safe_load(ubi7_1_config_file)
+def test_ubi_config(ubi7_1_config_file1):
+    config_dict = yaml.safe_load(ubi7_1_config_file1)
     config = UbiConfig.load_from_dict(config_dict, "rhel-atomic-host.yaml", "7.1")
     assert config.modules[0].name == "nodejs"
     assert config.content_sets.rpm.input == "rhel-atomic-host-rpms"

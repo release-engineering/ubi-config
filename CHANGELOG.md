@@ -9,7 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fix LocalLoader couldn't populate version field, now it populates the version field
-  based on directory name
+  based on directory name.
+- Fix remote loader couldn't load all config files with same name from different branches.
+- Make version an option argument to Loader.load(), so it could load right version of
+  config file.
 
 ## [v2.0.0] - 2019-10-16
 

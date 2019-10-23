@@ -21,7 +21,7 @@ def test_bad_yaml():
             mock_json(
                 [
                     {
-                        "name": "master",
+                        "name": "ubi7",
                         "commit": {"id": "2189cbc2e447f796fe354f8d784d76b0a2620248"},
                     }
                 ]
