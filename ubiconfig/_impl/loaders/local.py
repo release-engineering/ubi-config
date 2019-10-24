@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 
 import yaml
 from jsonschema.exceptions import ValidationError
@@ -40,15 +41,21 @@ class LocalLoader(object):
 
                 If version is None, we should get it from its path.
         """
-        if version is None:
-            # get version form path, such as configs/ubi7.1/config.yaml, get
-            # ubi7.1
-            version = os.path.basename(os.path.dirname(file_name))
-
         if not self._isroot:
             file_path = os.path.join(self._path, file_name)
         else:
             file_path = file_name
+
+        if version is None:
+            # get version from path, such as configs/ubi7.1/config.yaml, get
+            # ubi7.1.
+            version = os.path.basename(os.path.dirname(os.path.abspath(file_path)))
+
+        if not re.search(r"ubi[0-9]\.[0-9]{1,2}$|ubi[0-9]$", version):
+            raise ValueError(
+                "Expect directories named in format ubi[0-9].([0-9]{1,2})$' or ubi[0-9]$, but got %s"
+                % version
+            )
 
         LOG.info("Loading configuration file locally: %s", file_path)
 
@@ -94,7 +101,7 @@ class LocalLoader(object):
             ]
             if conf_files:
                 # if there's yaml files, then it must under some version directory
-                version = os.path.basename(root)
+                version = os.path.basename(os.path.abspath(root))
                 ver_files_map.setdefault(version, []).extend(conf_files)
                 # the result map is as {'version': ['file1', 'file2', ..]}
 
