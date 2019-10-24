@@ -51,9 +51,9 @@ class LocalLoader(object):
             # ubi7.1.
             version = os.path.basename(os.path.dirname(os.path.abspath(file_path)))
 
-        if not re.search(r"ubi[0-9]{1}\.?[0-9]{0,2}$", version):
+        if not re.search(r"ubi[0-9]\.[0-9]{1,2}$|ubi[0-9]$", version):
             raise ValueError(
-                "Expect directories named in format ubi[0-9]{1}.?([0-9]{0,2})$', but got %s"
+                "Expect directories named in format ubi[0-9].([0-9]{1,2})$' or ubi[0-9]$, but got %s"
                 % version
             )
 
