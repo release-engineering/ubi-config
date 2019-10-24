@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make ubiconfig.utils.config_validation.validate_config publicly available via
   ubiconfig.validate_config
 
+### Fixed
+- Fix LocalLoader couldn't get right version if the argument version of load() is None.
+
 ## [v2.1.0] - 2019-10-23
 
 ### Fixed

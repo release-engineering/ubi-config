@@ -40,15 +40,15 @@ class LocalLoader(object):
 
                 If version is None, we should get it from its path.
         """
-        if version is None:
-            # get version form path, such as configs/ubi7.1/config.yaml, get
-            # ubi7.1
-            version = os.path.basename(os.path.dirname(file_name))
-
         if not self._isroot:
             file_path = os.path.join(self._path, file_name)
         else:
             file_path = file_name
+
+        if version is None:
+            # get version from path, such as configs/ubi7.1/config.yaml, get
+            # ubi7.1
+            version = os.path.basename(os.path.dirname(file_path))
 
         LOG.info("Loading configuration file locally: %s", file_path)
 
