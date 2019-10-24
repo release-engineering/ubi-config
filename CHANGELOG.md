@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v2.2.0] - 2019-10-24
+
 ### Added
 - Make ubiconfig.utils.config_validation.validate_config publicly available via
   ubiconfig.validate_config
