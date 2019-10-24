@@ -53,7 +53,8 @@ class LocalLoader(object):
 
         if not re.search(r"ubi[0-9]{1}\.?[0-9]{0,2}$", version):
             raise ValueError(
-                "Expect directories named in format ubi[0-9]{1}.?[0-9]{0,2}$, but got %s" % version
+                "Expect directories named in format ubi[0-9]{1}.?([0-9]{0,2})$', but got %s"
+                % version
             )
 
         LOG.info("Loading configuration file locally: %s", file_path)
