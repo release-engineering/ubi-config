@@ -97,7 +97,7 @@ class LocalLoader(object):
             ]
             if conf_files:
                 # if there's yaml files, then it must under some version directory
-                version = os.path.basename(root)
+                version = os.path.basename(root) or os.path.basename(os.getcwd())
                 ver_files_map.setdefault(version, []).extend(conf_files)
                 # the result map is as {'version': ['file1', 'file2', ..]}
 

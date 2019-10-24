@@ -181,9 +181,10 @@ def test_load_all_with_error_config(
 
 
 def test_load_from_local():
-    loader = ubi.get_loader(TEST_DATA_DIR)
+    path = os.path.join(TEST_DATA_DIR, "configs/ubi7.1")
+    loader = ubi.get_loader(path)
     # loads relative to given path
-    config = loader.load("configs/ubi7.1/rhel-atomic-host.yaml")
+    config = loader.load("rhel-atomic-host.yaml")
     assert isinstance(config, UbiConfig)
     assert config.version == "7.1"
 
