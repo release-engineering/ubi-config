@@ -78,6 +78,8 @@ API Reference
 
 .. autofunction:: get_loader
 
+.. autofunction:: validate_config
+
 .. autoclass:: UbiConfig
     :members: load_from_dict
 
