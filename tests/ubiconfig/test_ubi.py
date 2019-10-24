@@ -196,13 +196,13 @@ def test_load_from_local_decimal_integrity():
 
 
 def test_load_from_nonyaml(tmpdir):
-    somefile = tmpdir.join("some-file.txt")
+    somefile = tmpdir.mkdir("ubi7").join("some-file.txt")
     somefile.write("[oops, this is not valid yaml")
 
     loader = ubi.get_loader(str(tmpdir))
 
     with pytest.raises(yaml.YAMLError):
-        loader.load("some-file.txt")
+        loader.load("ubi7/some-file.txt")
 
 
 def test_load_local_failed_validation():
@@ -219,6 +219,13 @@ def test_load_all_from_local():
     assert len(configs) == 2
     assert configs[0].version == "7.1"
     assert isinstance(configs[0], UbiConfig)
+
+
+def test_load_from_directory_not_named_after_ubi():
+    with patch("os.path.isdir"):
+        loader = ubi.get_loader("./ubi7.1a")
+        with pytest.raises(ValueError):
+            config = loader.load("file")
 
 
 def test_load_all_from_local_with_error_configs():
