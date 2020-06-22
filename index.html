@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ubi-config &#8212; ubi-config  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -100,9 +101,9 @@ for you.</p>
 </div>
 <div class="section" id="ubiconfig">
 <h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">ubiconfig</span></code><a class="headerlink" href="#ubiconfig" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
+<dl class="py function">
 <dt id="ubiconfig.get_loader">
-<code class="sig-prename descclassname">ubiconfig.</code><code class="sig-name descname">get_loader</code><span class="sig-paren">(</span><em class="sig-param">source=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.get_loader" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">ubiconfig.</code><code class="sig-name descname">get_loader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.get_loader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a Loader instance which is used to load configurations.</p>
 <p><code class="docutils literal notranslate"><span class="pre">source</span></code> should be provided as one of the following:</p>
 <blockquote>
@@ -136,16 +137,16 @@ when given relative paths to config files.</p>
 </div>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="ubiconfig.validate_config">
-<code class="sig-prename descclassname">ubiconfig.</code><code class="sig-name descname">validate_config</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">schema=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.validate_config" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">ubiconfig.</code><code class="sig-name descname">validate_config</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">schema</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.validate_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Validate the data according to the schema</p>
 <p>If no schema is provided, <code class="xref py py-data docutils literal notranslate"><span class="pre">DEFAULT_SCHEMA</span></code> is used</p>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="ubiconfig.UbiConfig">
-<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.</code><code class="sig-name descname">UbiConfig</code><span class="sig-paren">(</span><em class="sig-param">cs</em>, <em class="sig-param">pkgs</em>, <em class="sig-param">mds</em>, <em class="sig-param">file_name</em>, <em class="sig-param">version</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.UbiConfig" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.</code><code class="sig-name descname">UbiConfig</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cs</span></em>, <em class="sig-param"><span class="n">pkgs</span></em>, <em class="sig-param"><span class="n">mds</span></em>, <em class="sig-param"><span class="n">file_name</span></em>, <em class="sig-param"><span class="n">version</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.UbiConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrap all UBI related configurations
 Examples to access different configurations:</p>
 <dl class="simple">
@@ -168,9 +169,9 @@ config.content_sets.debuginfo.output</p>
 </ul>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py method">
 <dt id="ubiconfig.UbiConfig.load_from_dict">
-<em class="property">classmethod </em><code class="sig-name descname">load_from_dict</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">file_name</em>, <em class="sig-param">version=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.UbiConfig.load_from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">load_from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">file_name</span></em>, <em class="sig-param"><span class="n">version</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.UbiConfig.load_from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create new instance of UbiConfig and load it from provided dictonary with
 following format:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -190,15 +191,15 @@ following format:</p>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="ubiconfig.Loader">
 <em class="property">class </em><code class="sig-prename descclassname">ubiconfig.</code><code class="sig-name descname">Loader</code><a class="headerlink" href="#ubiconfig.Loader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load UBI configuration.</p>
 <p>Don’t construct instances of this class directly;
 use the <a class="reference internal" href="#ubiconfig.get_loader" title="ubiconfig.get_loader"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_loader()</span></code></a> function.</p>
-<dl class="method">
+<dl class="py method">
 <dt id="ubiconfig.Loader.load">
-<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param">file_name</em>, <em class="sig-param">version=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.Loader.load" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_name</span></em>, <em class="sig-param"><span class="n">version</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.Loader.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a single configuration file and return a <a class="reference internal" href="#ubiconfig.UbiConfig" title="ubiconfig.UbiConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">UbiConfig</span></code></a> object.</p>
 <p>The given file_name should be a relative path to a YAML file
 in the loader’s config source (e.g. relative path to file within a
@@ -207,7 +208,7 @@ git repo or local directory).</p>
 if it’s None, then use default, e.g. ubi7, ubi8</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="ubiconfig.Loader.load_all">
 <code class="sig-name descname">load_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.Loader.load_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the list of config files from repo and call load on every file.
@@ -219,9 +220,9 @@ Return a list of <a class="reference internal" href="#ubiconfig.UbiConfig" title
 </div>
 <div class="section" id="ubiconfig-config-types-packages">
 <h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">ubiconfig.config_types.packages</span></code><a class="headerlink" href="#ubiconfig-config-types-packages" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="ubiconfig.config_types.packages.Packages">
-<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.config_types.packages.</code><code class="sig-name descname">Packages</code><span class="sig-paren">(</span><em class="sig-param">include</em>, <em class="sig-param">exclude</em>, <em class="sig-param">arches</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.packages.Packages" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.config_types.packages.</code><code class="sig-name descname">Packages</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">include</span></em>, <em class="sig-param"><span class="n">exclude</span></em>, <em class="sig-param"><span class="n">arches</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.packages.Packages" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -236,18 +237,18 @@ Return a list of <a class="reference internal" href="#ubiconfig.UbiConfig" title
 </div>
 <div class="section" id="ubiconfig-config-types-modules">
 <h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">ubiconfig.config_types.modules</span></code><a class="headerlink" href="#ubiconfig-config-types-modules" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="ubiconfig.config_types.modules.Modules">
-<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.config_types.modules.</code><code class="sig-name descname">Modules</code><span class="sig-paren">(</span><em class="sig-param">include</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.modules.Modules" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.config_types.modules.</code><code class="sig-name descname">Modules</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">include</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.modules.Modules" title="Permalink to this definition">¶</a></dt>
 <dd><p>group of modules</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>include</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – a list of <a class="reference internal" href="#ubiconfig.config_types.modules.Module" title="ubiconfig.config_types.modules.Module"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a> instances</p>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py method">
 <dt id="ubiconfig.config_types.modules.Modules.load_from_dict">
-<em class="property">classmethod </em><code class="sig-name descname">load_from_dict</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.modules.Modules.load_from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">load_from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.modules.Modules.load_from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create instances of <a class="reference internal" href="#ubiconfig.config_types.modules.Modules" title="ubiconfig.config_types.modules.Modules"><code class="xref py py-class docutils literal notranslate"><span class="pre">Modules</span></code></a> from a dictionary</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -268,18 +269,18 @@ Return a list of <a class="reference internal" href="#ubiconfig.UbiConfig" title
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="ubiconfig.config_types.modules.Module">
-<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.config_types.modules.</code><code class="sig-name descname">Module</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">stream</em>, <em class="sig-param">profiles=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.modules.Module" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.config_types.modules.</code><code class="sig-name descname">Module</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">stream</span></em>, <em class="sig-param"><span class="n">profiles</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.modules.Module" title="Permalink to this definition">¶</a></dt>
 <dd><p>Define a single module</p>
 </dd></dl>
 
 </div>
 <div class="section" id="ubiconfig-config-types-content-sets">
 <h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">ubiconfig.config_types.content_sets</span></code><a class="headerlink" href="#ubiconfig-config-types-content-sets" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="ubiconfig.config_types.content_sets.ContentSetsMapping">
-<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.config_types.content_sets.</code><code class="sig-name descname">ContentSetsMapping</code><span class="sig-paren">(</span><em class="sig-param">rpm</em>, <em class="sig-param">srpm</em>, <em class="sig-param">debuginfo</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.content_sets.ContentSetsMapping" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.config_types.content_sets.</code><code class="sig-name descname">ContentSetsMapping</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rpm</span></em>, <em class="sig-param"><span class="n">srpm</span></em>, <em class="sig-param"><span class="n">debuginfo</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.content_sets.ContentSetsMapping" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -289,9 +290,9 @@ Return a list of <a class="reference internal" href="#ubiconfig.UbiConfig" title
 </ul>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py method">
 <dt id="ubiconfig.config_types.content_sets.ContentSetsMapping.load_from_dict">
-<em class="property">classmethod </em><code class="sig-name descname">load_from_dict</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.content_sets.ContentSetsMapping.load_from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">load_from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.content_sets.ContentSetsMapping.load_from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create instances of <a class="reference internal" href="#ubiconfig.config_types.content_sets.ContentSetsMapping" title="ubiconfig.config_types.content_sets.ContentSetsMapping"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContentSetsMapping</span></code></a> from a dictionary</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -312,21 +313,21 @@ Return a list of <a class="reference internal" href="#ubiconfig.UbiConfig" title
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="ubiconfig.config_types.content_sets.Rpm">
-<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.config_types.content_sets.</code><code class="sig-name descname">Rpm</code><span class="sig-paren">(</span><em class="sig-param">input_content</em>, <em class="sig-param">output_content</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.content_sets.Rpm" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.config_types.content_sets.</code><code class="sig-name descname">Rpm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_content</span></em>, <em class="sig-param"><span class="n">output_content</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.content_sets.Rpm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Input-output rpm content sets mapping</p>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="ubiconfig.config_types.content_sets.Srpm">
-<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.config_types.content_sets.</code><code class="sig-name descname">Srpm</code><span class="sig-paren">(</span><em class="sig-param">input_content</em>, <em class="sig-param">output_content</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.content_sets.Srpm" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.config_types.content_sets.</code><code class="sig-name descname">Srpm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_content</span></em>, <em class="sig-param"><span class="n">output_content</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.content_sets.Srpm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Input-output srpm content sets mapping</p>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="ubiconfig.config_types.content_sets.Debuginfo">
-<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.config_types.content_sets.</code><code class="sig-name descname">Debuginfo</code><span class="sig-paren">(</span><em class="sig-param">input_content</em>, <em class="sig-param">output_content</em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.content_sets.Debuginfo" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">ubiconfig.config_types.content_sets.</code><code class="sig-name descname">Debuginfo</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_content</span></em>, <em class="sig-param"><span class="n">output_content</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ubiconfig.config_types.content_sets.Debuginfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Input-output debuginfo content sets mapping</p>
 </dd></dl>
 
@@ -406,11 +407,11 @@ it has to be have following structure:</p>
 <hr />
 <ul>
     
+    <li class="toctree-l1"><a href="https://pypi.org/project/ubi-config">PyPI</a></li>
+    
     <li class="toctree-l1"><a href="genindex.html">Index</a></li>
     
     <li class="toctree-l1"><a href="https://github.com/release-engineering/ubi-config">Source</a></li>
-    
-    <li class="toctree-l1"><a href="https://pypi.org/project/ubi-config">PyPI</a></li>
     
 </ul>
 <div class="relations">
@@ -446,7 +447,7 @@ it has to be have following structure:</p>
       &copy;2018, Red Hat.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
