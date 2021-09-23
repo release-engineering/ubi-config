@@ -22,8 +22,7 @@ def test_pack_with_dot():
 
 
 def test_white_list_package():
-    """If it's a whilelist package, then the format <name>*.<arch> is not allowed
-    """
+    """If it's a whilelist package, then the format <name>*.<arch> is not allowed"""
     pkg_info = "kernel*"
     arches = ["i686", "ppc64le"]
     expected_error = ValueError("<name>*.<arch> is not supported in whitelist")
