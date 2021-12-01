@@ -1,3 +1,6 @@
 pytest
 mock
-ordereddict; python_version<'2.7'
+
+# Old Python needs old pyresistent
+pyrsistent==0.16.0; python_version<='2.7'
+pyrsistent; python_version>'2.7'

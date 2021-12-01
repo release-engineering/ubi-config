@@ -27,7 +27,7 @@ class GitlabLoader(Loader):
         self._files_branch_map = self._pre_load()
 
     def load(self, file_name, version=None):
-        """ Load file from remote repository.
+        """Load file from remote repository.
         :param file_name: filename that is on remote repository in any branch
         """
         if file_name not in self._files_branch_map:
@@ -85,8 +85,7 @@ class GitlabLoader(Loader):
         return ubi_configs
 
     def _pre_load(self):
-        """Iterate all branches to get a mapping of {file_path: (branch, sha1)...}
-        """
+        """Iterate all branches to get a mapping of {file_path: (branch, sha1)...}"""
         files_branch_map = {}
 
         LOG.debug("Loading config files from all branches")
