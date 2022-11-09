@@ -3,8 +3,8 @@ ubiconfig
 
 A Python library for accessing Universal Base Image configuration
 
-[![Build Status](https://travis-ci.org/release-engineering/ubi-config.svg?branch=master)](https://travis-ci.org/release-engineering/ubi-config)
-[![Coverage Status](https://coveralls.io/repos/github/release-engineering/ubi-config/badge.svg?branch=master)](https://coveralls.io/github/release-engineering/ubi-config?branch=master)
+[![Build Status](https://github.com/release-engineering/ubi-config/actions/workflows/tox-test.yml/badge.svg)](https://github.com/release-engineering/ubi-config/actions/workflows/tox-test.yml))
+[![codecov](https://codecov.io/gh/release-engineering/ubi-config/branch/master/graph/badge.svg?token=fPG7EINR9O)](https://codecov.io/gh/release-engineering/ubi-config)
 [![Maintainability](https://api.codeclimate.com/v1/badges/c62407f84ad66135fa8d/maintainability)](https://codeclimate.com/github/release-engineering/ubi-config/maintainability)
 
 - [Source](https://github.com/release-engineering/ubi-config)
