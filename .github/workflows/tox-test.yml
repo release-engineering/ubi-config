@@ -3,18 +3,6 @@ name: Tox tests
 on: [push, pull_request]
 
 jobs:
-  py27:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 2.7
-      - name: Install Tox
-        run: pip install tox
-      - name: Run Tox
-        run: tox -e py27
   py38:
     runs-on: ubuntu-latest
     steps:
