@@ -1,5 +1,5 @@
 import pytest
-from six.moves.urllib.parse import urljoin
+from urllib.parse import urljoin
 
 from ubiconfig.utils.api import gitlab
 

@@ -2,7 +2,7 @@
 import os
 import re
 
-from six.moves.urllib.parse import urljoin
+from urllib.parse import urljoin
 
 
 DEFAULT_GIT_LAB_URL_FMT = re.compile(r"(?P<host>.+com|org|net)/(?P<project>.+)")

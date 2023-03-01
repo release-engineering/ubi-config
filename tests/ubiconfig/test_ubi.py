@@ -274,7 +274,6 @@ def test_load_file_without_providing_version(
     ubi7_config_file,
     response,
 ):
-
     mocked_get_branches.return_value = branches
     mocked_pre_load.return_value = files_branch_map
     mocked_session.return_value.get.side_effect = [response(ubi7_config_file)]
@@ -298,7 +297,6 @@ def test_load_file_with_wanted_version(
     ubi8_config_file,
     response,
 ):
-
     mocked_get_branches.return_value = branches
     mocked_pre_load.return_value = files_branch_map
     mocked_session.return_value.get.side_effect = [
@@ -326,7 +324,6 @@ def test_load_file_with_non_exists_version(
     ubi8_config_file,
     response,
 ):
-
     mocked_get_branches.return_value = branches
     mocked_pre_load.return_value = files_branch_map
     mocked_session.return_value.get.side_effect = [response(ubi8_config_file)]

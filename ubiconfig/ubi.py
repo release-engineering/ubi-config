@@ -1,7 +1,7 @@
 import os
 import logging
 
-from six.moves.urllib.parse import urlparse
+from urllib.parse import urlparse
 
 from ._impl.loaders import _LocalLoader, _GitlabLoader
 
