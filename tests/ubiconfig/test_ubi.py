@@ -259,7 +259,7 @@ def test_load_file_non_exists_from_remote(
     mocked_pre_load.return_value = files_branch_map
 
     with pytest.raises(ValueError):
-        ubi.get_loader().load("non-exists.yaml")
+        ubi.get_loader().load("non-exists.yaml", "ubi7")
 
 
 @patch("requests.Session")
@@ -278,10 +278,21 @@ def test_load_file_without_providing_version(
     mocked_pre_load.return_value = files_branch_map
     mocked_session.return_value.get.side_effect = [response(ubi7_config_file)]
 
-    loader = ubi.get_loader()
-    config = loader.load("rhel-7-server.yaml")
+    with pytest.raises(ValueError):
+        ubi.get_loader().load("rhel-7-server.yaml")
 
-    assert config.version == "7"
+
+@patch("requests.Session")
+@patch("ubiconfig._impl.loaders._GitlabLoader._pre_load")
+@patch("ubiconfig._impl.loaders._GitlabLoader._get_branches")
+def test_load_invalid_branch_name(
+    mocked_get_branches, mocked_pre_load, mocked_session, branches, files_branch_map
+):
+    mocked_get_branches.return_value = branches
+    mocked_pre_load.return_value = files_branch_map
+
+    with pytest.raises(ValueError):
+        ubi.get_loader().load("rhel-7-server.yaml", "invalid_branch")
 
 
 @patch("requests.Session")
@@ -332,6 +343,27 @@ def test_load_file_with_non_exists_version(
     config = loader.load("rhel-8-for-power-le.yaml", "ubi8.20")
 
     assert config.version == "8"
+
+
+@patch("requests.Session")
+@patch("ubiconfig._impl.loaders._GitlabLoader._pre_load")
+@patch("ubiconfig._impl.loaders._GitlabLoader._get_branches")
+def test_load_file_failed_fallback_to_default(
+    mocked_get_branches,
+    mocked_pre_load,
+    mocked_session,
+    branches,
+    files_branch_map,
+    ubi8_config_file,
+    response,
+):
+    mocked_get_branches.return_value = branches
+    mocked_pre_load.return_value = files_branch_map
+    mocked_session.return_value.get.side_effect = [response(ubi8_config_file)]
+
+    with pytest.raises(ValueError):
+        loader = ubi.get_loader()
+        config = loader.load("rhel-8-for-power-le.yaml", "ubi9.9")
 
 
 def test_get_loader_notexist(tmpdir):

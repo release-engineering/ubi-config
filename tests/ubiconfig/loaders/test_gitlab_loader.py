@@ -42,4 +42,4 @@ def test_bad_yaml():
 
         # It should propagate the YAML load exception
         with pytest.raises(yaml.YAMLError):
-            loader.load("badfile.yaml")
+            loader.load("badfile.yaml", "ubi7")

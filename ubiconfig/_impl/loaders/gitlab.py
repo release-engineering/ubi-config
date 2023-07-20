@@ -1,4 +1,5 @@
 import logging
+import re
 import yaml
 import requests
 
@@ -11,6 +12,8 @@ from ubiconfig.config_types import UbiConfig
 from .base import Loader
 
 LOG = logging.getLogger("ubiconfig")
+
+BRANCH_RE = re.compile(r"^(?P<prefix>[\w-]{1,25})(?P<default_version>[\d]{1,2})")
 
 
 class GitlabLoader(Loader):
@@ -29,31 +32,41 @@ class GitlabLoader(Loader):
     def load(self, file_name, version=None):
         """Load file from remote repository.
         :param file_name: filename that is on remote repository in any branch
+        :param version: name of remote branch
         """
+        if version is None:
+            raise ValueError(
+                "Provide valid name of remote branch, provided %s" % version
+            )
+
         if file_name not in self._files_branch_map:
             raise ValueError(
                 "Couldn't find file %s from remote repo %s" % (file_name, self._url)
             )
 
-        sha1 = self._branches.get(version)
-        if version and not sha1:
-            LOG.warning(
-                "Couldn't find version %s from %s, will try to find %s in default",
-                version,
-                self._url,
-                file_name,
-            )
+        match = re.match(BRANCH_RE, version)
+        if not match:
+            raise ValueError("Invalid version (branch name) %s" % version)
 
-        if not version or not sha1:
-            # branch is not available from the wanted version or not specified,
-            # use the default version.
-            for branch_sha1 in self._files_branch_map[file_name]:
-                if branch_sha1[0] == "ubi7":
-                    version = "ubi7"
-                    break
-            else:
-                version = "ubi8"
-            sha1 = self._branches[version]
+        prefix = match.group("prefix")
+        default_version = match.group("default_version")
+
+        default_branch = f"{prefix}{default_version}"
+
+        sha1 = None
+        loaded_version = None
+
+        for branch_name in (version, default_branch):
+            sha1 = self._branches.get(branch_name)
+            if sha1:
+                loaded_version = branch_name.lstrip(prefix)
+                break
+
+        if sha1 is None:
+            raise ValueError(
+                "Couldn't find version %s and default branch %s from %s for %s"
+                % (version, default_branch, self._url, file_name)
+            )
 
         LOG.info("Loading config file %s from branch %s", file_name, version)
         config_file_url = self._repo_api.get_file_content_api(file_name, sha1)
@@ -64,7 +77,7 @@ class GitlabLoader(Loader):
         # validate input data
         validate_config(config_dict)
 
-        return UbiConfig.load_from_dict(config_dict, file_name, version[3:])
+        return UbiConfig.load_from_dict(config_dict, file_name, loaded_version)
 
     def load_all(self):
         ubi_configs = []
