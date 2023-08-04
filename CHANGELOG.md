@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v2.3.0] - 2023-08-04
+
+### Added
+- `GitlabLoader` is now more generic and supports custom branch names
+
 ## [v2.2.0] - 2019-10-24
 
 ### Added
