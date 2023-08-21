@@ -62,6 +62,14 @@
                 },
             "additionalProperties": false,
             "required": ["include"]
+            },
+        "flags": {
+            "type": "object",
+            "properties": {
+                "base_pkgs_only": {"type": ["string", "boolean"],
+                                   "$comment": "Include only packages defined in config file."}
+                },
+            "additionalProperties": false
             }
         },
     "additionalProperties": false,

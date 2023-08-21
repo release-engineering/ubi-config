@@ -458,3 +458,4 @@ def test_ubi_config(ubi7_1_config_file1):
     assert config.content_sets.rpm.input == "rhel-atomic-host-rpms"
     assert str(config.packages.blacklist[0]) == "<Package: kernel*>"
     assert config.version == "7.1"
+    assert config.flags.base_pkgs_only.value is False

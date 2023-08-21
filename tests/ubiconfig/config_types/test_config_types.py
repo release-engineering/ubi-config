@@ -1,4 +1,6 @@
-from ubiconfig.config_types import packages, modules, content_sets
+import pytest
+
+from ubiconfig.config_types import packages, modules, content_sets, flags
 
 
 def test_package_with_arch():
@@ -96,3 +98,21 @@ def test_content_sets():
         ),
     }
     assert expected_exported_dict == css.export_dict()
+
+
+@pytest.mark.parametrize(
+    ("flag, input_val, output_val"),
+    [
+        ("flag_1", True, True),
+        ("flag_2", "some-value", "some-value"),
+        ("flag_3", "faLse", False),
+        ("flag_4", "True", True),
+    ],
+)
+def test_flags(flag, input_val, output_val):
+    data = {flag: input_val}
+
+    parsed_flags = flags.Flags.load_from_dict(data)
+
+    assert getattr(parsed_flags, flag).name == flag
+    assert getattr(parsed_flags, flag).value == output_val

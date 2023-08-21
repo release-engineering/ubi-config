@@ -40,3 +40,6 @@ modules:
     stream: 10
   - name: something-else
     stream: 1.10
+
+flags:
+  base_pkgs_only: false
