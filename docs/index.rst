@@ -151,8 +151,13 @@ Loaded configuration files has to be presented in following format
     include:
     - name: <module-name>
       stream: <module-stream>
+  # Flags for interacting tools and services
+  flags:
+    flag_name_1: value
+    flag_name_2: value
 
 See also :py:meth:`~ubiconfig.Loader.load_all`, :py:meth:`~ubiconfig.Loader.load`, :py:meth:`~ubiconfig.get_loader`
+For supported flags refer to :ref:`config_schema`.
 
 .. _git_repo_format:
 
@@ -170,3 +175,16 @@ it has to be have following structure:
 
 See also: :ref:`yaml_format`
 
+
+.. _config_schema:
+
+JSON schema
+-----------
+
+This document shows the schema of ubi config files supported by this library,
+in `JSON schema`_ format.
+
+.. include:: ../ubi-config/utils/config_schema.json
+    :code: json
+
+.. _JSON schema: https://json-schema.org/

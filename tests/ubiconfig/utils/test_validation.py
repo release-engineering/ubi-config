@@ -49,3 +49,15 @@ def test_validate_failed_wrong_data_type(ubi7_1_config):
     ubi7_1_config["packages"]["include"] = "A string"
     with pytest.raises(ValidationError):
         config_validation.validate_config(ubi7_1_config)
+
+
+def test_validate_failed_wrong_data_type_flags(ubi7_1_config):
+    ubi7_1_config["flags"]["base_pkgs_only"] = 120
+    with pytest.raises(ValidationError):
+        config_validation.validate_config(ubi7_1_config)
+
+
+def test_validate_failed_unsupported_flag(ubi7_1_config):
+    ubi7_1_config["flags"] = {"unsupported-flag": True}
+    with pytest.raises(ValidationError):
+        config_validation.validate_config(ubi7_1_config)

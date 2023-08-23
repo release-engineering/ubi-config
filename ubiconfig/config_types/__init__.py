@@ -1,6 +1,7 @@
 from .modules import Modules
 from .packages import Packages
 from .content_sets import ContentSetsMapping
+from .flags import Flags
 
 
 class UbiConfig(object):
@@ -16,18 +17,20 @@ class UbiConfig(object):
       config.content_sets.rpm.input
       config.content_sets.debuginfo.output"""
 
-    def __init__(self, cs, pkgs, mds, file_name, version):
+    def __init__(self, cs, pkgs, mds, file_name, version, flags):
         """
         :param cs: :class:`~ubiconfig.config_types.content_sets.ContentSetsMapping`
         :param pkgs: :class:`~ubiconfig.config_types.packages.Packages`
         :param mds: :class:`~ubiconfig.config_types.modules.Modules`
         :param filename: filename used as identifier
+        :param flags: :class:`~ubiconfig.config_types.flags.Flags`
         """
         self.content_sets = cs
         self.packages = pkgs
         self.modules = mds
         self.file_name = file_name
         self.version = version
+        self.flags = flags
 
     def __repr__(self):
         return self.file_name
@@ -58,9 +61,16 @@ class UbiConfig(object):
             pkgs.get("include", []), pkgs.get("exclude", []), data.get("arches", [])
         )
         cs_map = ContentSetsMapping.load_from_dict(data["content_sets"])
+
+        flags = Flags.load_from_dict(data.get("flags", {}))
         # use the simplified file name
         file_name = file_name.split("/")[-1]
 
         return cls(
-            cs=cs_map, pkgs=pkgs_data, mds=m_data, file_name=file_name, version=version
+            cs=cs_map,
+            pkgs=pkgs_data,
+            mds=m_data,
+            file_name=file_name,
+            version=version,
+            flags=flags,
         )
