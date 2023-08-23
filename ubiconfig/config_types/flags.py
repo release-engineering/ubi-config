@@ -12,13 +12,16 @@ class Flags(object):
         Args:
             include(list): a list of :class:`Flag` instances
         """
-        self.flags = flags
+        self._flags = flags
 
     def __getattr__(self, name):
         # allow getting flags as object attrs
-        for item in self.flags:
+        for item in self._flags:
             if item.name == name:
                 return item
+
+    def as_dict(self):
+        return {item.name: item.value for item in self._flags}
 
     @classmethod
     def load_from_dict(cls, data):
