@@ -116,3 +116,12 @@ def test_flags(flag, input_val, output_val):
 
     assert getattr(parsed_flags, flag).name == flag
     assert getattr(parsed_flags, flag).value == output_val
+
+
+def test_flags_as_dict():
+    data = {"flag_1": "some-value", "flag_2": "other_value"}
+
+    parsed_flags = flags.Flags.load_from_dict(data)
+    flags_dict = parsed_flags.as_dict()
+
+    assert data == flags_dict
