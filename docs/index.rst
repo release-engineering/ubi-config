@@ -184,7 +184,7 @@ JSON schema
 This document shows the schema of ubi config files supported by this library,
 in `JSON schema`_ format.
 
-.. include:: ../ubi-config/utils/config_schema.json
+.. include:: ../ubiconfig/utils/config_schema.json
     :code: json
 
 .. _JSON schema: https://json-schema.org/
