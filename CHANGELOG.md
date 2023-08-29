@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- n/a
+
+## [v3.0.0] - 2023-08-29
+
 ### Added
 
 - Support for flags in config file
