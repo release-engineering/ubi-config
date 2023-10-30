@@ -131,7 +131,7 @@ def test_load_all_from_default_repo(
 ):
     mocked_get_branches.return_value = branches
     mocked_pre_load.return_value = files_branch_map
-    mocked_session.return_value.get.side_effect = [
+    mocked_session.return_value.request.side_effect = [
         response(ubi7_1_config_file1),
         response(ubi8_config_file),
         response(ubi7_1_config_file2),
@@ -165,7 +165,7 @@ def test_load_all_with_error_config(
 ):
     mocked_get_branches.return_value = branches
     mocked_pre_load.return_value = files_branch_map_with_error_config_file
-    mocked_session.return_value.get.side_effect = [
+    mocked_session.return_value.request.side_effect = [
         response(ubi7_1_config_file1),
         response(ubi8_config_file),
         response(ubi7_1_config_file2),
@@ -176,7 +176,7 @@ def test_load_all_with_error_config(
 
     loader = ubi.get_loader()
     configs = loader.load_all()
-    assert mocked_session.return_value.get.call_count == 6
+    assert mocked_session.return_value.request.call_count == 6
     assert len(configs) == 4
 
 
@@ -276,7 +276,7 @@ def test_load_file_without_providing_version(
 ):
     mocked_get_branches.return_value = branches
     mocked_pre_load.return_value = files_branch_map
-    mocked_session.return_value.get.side_effect = [response(ubi7_config_file)]
+    mocked_session.return_value.request.side_effect = [response(ubi7_config_file)]
 
     with pytest.raises(ValueError):
         ubi.get_loader().load("rhel-7-server.yaml")
@@ -310,7 +310,7 @@ def test_load_file_with_wanted_version(
 ):
     mocked_get_branches.return_value = branches
     mocked_pre_load.return_value = files_branch_map
-    mocked_session.return_value.get.side_effect = [
+    mocked_session.return_value.request.side_effect = [
         response(ubi7_config_file),
         response(ubi8_config_file),
     ]
@@ -337,7 +337,7 @@ def test_load_file_with_non_exists_version(
 ):
     mocked_get_branches.return_value = branches
     mocked_pre_load.return_value = files_branch_map
-    mocked_session.return_value.get.side_effect = [response(ubi8_config_file)]
+    mocked_session.return_value.request.side_effect = [response(ubi8_config_file)]
 
     loader = ubi.get_loader()
     config = loader.load("rhel-8-for-power-le.yaml", "ubi8.20")
@@ -359,7 +359,7 @@ def test_load_file_failed_fallback_to_default(
 ):
     mocked_get_branches.return_value = branches
     mocked_pre_load.return_value = files_branch_map
-    mocked_session.return_value.get.side_effect = [response(ubi8_config_file)]
+    mocked_session.return_value.request.side_effect = [response(ubi8_config_file)]
 
     with pytest.raises(ValueError):
         loader = ubi.get_loader()
@@ -393,7 +393,7 @@ def test_default_or_local_repo_not_set():
 
 @patch("requests.Session")
 def test_get_empty_branches(mocked_session):
-    mocked_session.return_value.get.return_value.json.return_value = {}
+    mocked_session.return_value.request.return_value.json.return_value = {}
     exception = RuntimeError(
         ("Please check https://contentdelivery.com/ubi/data " "is in right format")
     )
@@ -415,8 +415,8 @@ def test_get_branches(mocked_session, branches):
         {"name": "ubi8", "commit": {"id": "26d24af7859df3c4d361bd33cd57984d03abe206"}},
     ]
     headers = {"Content-Length": "629", "X-Total-Pages": "1", "X-Per-Page": "20"}
-    mocked_session.return_value.get.return_value.headers = headers
-    mocked_session.return_value.get.return_value.json.return_value = remote_branches
+    mocked_session.return_value.request.return_value.headers = headers
+    mocked_session.return_value.request.return_value.json.return_value = remote_branches
     loader = ubi.get_loader()
     actual_branches_sha1 = loader._get_branches()
     assert actual_branches_sha1 == branches
@@ -434,7 +434,7 @@ def test_pre_load(mocked_get_branches, mocked_session, files_branch_map):
     )
     mocked_get_branches.return_value = branch_sha1
     headers = {"Content-Length": "629", "X-Total-Pages": "1", "X-Per-Page": "20"}
-    mocked_session.return_value.get.return_value.headers = headers
+    mocked_session.return_value.request.return_value.headers = headers
     file_list = [
         [
             {"name": "rhel-7-server.yaml", "path": "rhel-7-server.yaml"},
@@ -444,7 +444,7 @@ def test_pre_load(mocked_get_branches, mocked_session, files_branch_map):
         [{"name": "rhel-7-server.yaml", "path": "rhel-7-server.yaml"}],
         [{"name": "rhel-8-for-power-le.yaml", "path": "rhel-8-for-power-le.yaml"}],
     ]
-    mocked_session.return_value.get.return_value.json.side_effect = file_list
+    mocked_session.return_value.request.return_value.json.side_effect = file_list
     loader = ubi.get_loader()
     expected_map = files_branch_map
     actual_files_branch_map = loader._files_branch_map

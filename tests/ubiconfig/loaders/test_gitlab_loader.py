@@ -1,6 +1,8 @@
 from mock import patch, MagicMock, Mock
 import pytest
 import yaml
+import requests
+import requests_mock
 
 from ubiconfig._impl.loaders import _GitlabLoader
 
@@ -16,7 +18,7 @@ def mock_json(value, headers=None):
 def test_bad_yaml():
     with patch("requests.Session") as mock_session_class:
         session = mock_session_class.return_value
-        session.get.side_effect = [
+        session.request.side_effect = [
             # branches
             mock_json(
                 [
@@ -43,3 +45,24 @@ def test_bad_yaml():
         # It should propagate the YAML load exception
         with pytest.raises(yaml.YAMLError):
             loader.load("badfile.yaml", "ubi7")
+
+
+def test_bad_json():
+    with requests_mock.Mocker() as m:
+        m.get(
+            "https://some-repo.example.com/api/v4/projects/foo%2Fbar/repository/branches"
+        )
+
+        with pytest.raises(requests.exceptions.JSONDecodeError):
+            _GitlabLoader("https://some-repo.example.com/foo/bar")
+
+
+def test_request_error():
+    with requests_mock.Mocker() as m:
+        m.get(
+            "https://some-repo.example.com/api/v4/projects/foo%2Fbar/repository/branches",
+            status_code=500,
+        )
+
+        with pytest.raises(requests.exceptions.HTTPError):
+            _GitlabLoader("https://some-repo.example.com/foo/bar")
