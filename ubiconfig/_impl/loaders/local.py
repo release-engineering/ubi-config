@@ -7,7 +7,7 @@ from jsonschema.exceptions import ValidationError
 
 from ubiconfig.utils.config_validation import validate_config
 from ubiconfig.config_types import UbiConfig
-
+from .base import PREFIX_VERSION_RE
 
 LOG = logging.getLogger("ubiconfig")
 
@@ -48,14 +48,16 @@ class LocalLoader(object):
 
         if version is None:
             # get version from path, such as configs/ubi7.1/config.yaml, get
-            # ubi7.1.
+            # ubi7.1
             version = os.path.basename(os.path.dirname(os.path.abspath(file_path)))
 
-        if not re.search(r"ubi[0-9]\.[0-9]{1,2}$|ubi[0-9]$", version):
+        match = re.match(PREFIX_VERSION_RE, version)
+
+        if not match:
             raise ValueError(
-                "Expect directories named in format ubi[0-9].([0-9]{1,2})$' or ubi[0-9]$, but got %s"
-                % version
+                f"Expected directories named in format '<PREFIX><MAJOR_VERSION>[.<MINOR_VERSION>]', but got {version}"
             )
+        prefix = match.group("prefix")
 
         LOG.info("Loading configuration file locally: %s", file_path)
 
@@ -64,7 +66,7 @@ class LocalLoader(object):
         # validate input data
         validate_config(config_dict)
 
-        return UbiConfig.load_from_dict(config_dict, file_name, version[3:])
+        return UbiConfig.load_from_dict(config_dict, file_name, version.lstrip(prefix))
 
     def load_all(self):
         """Load all config file from a local directory and all its subdirectories"""

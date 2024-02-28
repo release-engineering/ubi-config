@@ -180,13 +180,20 @@ def test_load_all_with_error_config(
     assert len(configs) == 4
 
 
-def test_load_from_local():
-    path = os.path.join(TEST_DATA_DIR, "configs/ubi7.1")
+@pytest.mark.parametrize(
+    "path, expected_version, filename",
+    [
+        ("configs/ubi7.1", "7.1", "rhel-atomic-host.yaml"),
+        ("configs/test-prefix12.13", "12.13", "test-config.yaml"),
+    ],
+)
+def test_load_from_local(path, expected_version, filename):
+    path = os.path.join(TEST_DATA_DIR, path)
     loader = ubi.get_loader(path)
     # loads relative to given path
-    config = loader.load("rhel-atomic-host.yaml")
+    config = loader.load(filename)
     assert isinstance(config, UbiConfig)
-    assert config.version == "7.1"
+    assert config.version == expected_version
 
 
 def test_load_from_local_decimal_integrity():
@@ -232,14 +239,14 @@ def test_load_all_from_local_with_error_configs():
     loader = ubi.get_loader(TEST_DATA_DIR)
     configs = loader.load_all()
 
-    assert len(configs) == 4
+    assert len(configs) == 5
 
 
 def test_load_all_from_local_recursive():
     repo = os.path.join(TEST_DATA_DIR, "configs")
     loader = ubi.get_loader(repo)
     configs = loader.load_all()
-    assert len(configs) == 4
+    assert len(configs) == 5
     assert isinstance(configs[0], UbiConfig)
     for conf in configs:
         # version should be populated

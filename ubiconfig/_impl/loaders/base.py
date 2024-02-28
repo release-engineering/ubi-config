@@ -1,3 +1,10 @@
+import re
+
+PREFIX_VERSION_RE = re.compile(
+    r"^(?P<prefix>[A-Za-z_-]{1,25})(?P<default_version>[\d]{1,2})(\.(?P<minor_version>[\d]{1,2}))?$"
+)
+
+
 class Loader(object):
     """Load UBI configuration.
 
