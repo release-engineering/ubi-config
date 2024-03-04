@@ -5,6 +5,7 @@ try:
 except ImportError:
     from ordereddict import OrderedDict
 
+import logging
 import pytest
 from mock import patch
 import yaml
@@ -412,7 +413,7 @@ def test_get_empty_branches(mocked_session):
 
 
 @patch("requests.Session")
-def test_get_branches(mocked_session, branches):
+def test_get_branches(mocked_session, branches, caplog):
     remote_branches = [
         {"name": "ubi7", "commit": {"id": "c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f"}},
         {
@@ -425,8 +426,14 @@ def test_get_branches(mocked_session, branches):
     mocked_session.return_value.request.return_value.headers = headers
     mocked_session.return_value.request.return_value.json.return_value = remote_branches
     loader = ubi.get_loader()
-    actual_branches_sha1 = loader._get_branches()
+    with caplog.at_level(logging.INFO):
+        actual_branches_sha1 = loader._get_branches()
+
     assert actual_branches_sha1 == branches
+    assert (
+        "Getting branches of the repo https://contentdelivery.com/ubi/data"
+        in caplog.text
+    )
 
 
 @patch("requests.Session")

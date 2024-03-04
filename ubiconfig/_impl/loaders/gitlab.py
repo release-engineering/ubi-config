@@ -163,7 +163,7 @@ class GitlabLoader(Loader):
         """Get a {branch: sha1} mapping for all branches of a given repo"""
         branch_sha1 = {}
 
-        LOG.info("Getting branches of the repo")
+        LOG.info("Getting branches of the repo %s", self._url)
         branches_list_api = self._repo_api.get_branch_list_api()
         response = self.do_request(method="GET", url=branches_list_api)
         data = self.try_json(response)
