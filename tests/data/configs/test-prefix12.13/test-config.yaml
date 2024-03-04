@@ -1,0 +1,21 @@
+content_sets:
+  # This defines the mapping between UBI content sets and underlying content sets
+  rpm:
+    output: ubi-7-server-rpms
+    input: rhel-7-server-rpms
+  srpm:
+    output: ubi-7-server-source-rpms
+    input: rhel-7-server-source-rpms
+  debuginfo:
+    output: ubi-7-server-debug-rpms
+    input: rhel-7-server-debug-rpms
+
+arches:
+ - src
+ - x86_64
+packages:
+  include:
+  - foo.*
+  # Blacklist of packages to exclude
+  exclude:
+  - bar

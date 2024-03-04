@@ -12,11 +12,9 @@ from ubiconfig.utils.api.gitlab import RepoApi
 from ubiconfig.utils.config_validation import validate_config
 from ubiconfig.config_types import UbiConfig
 
-from .base import Loader
+from .base import Loader, PREFIX_VERSION_RE
 
 LOG = logging.getLogger("ubiconfig")
-
-BRANCH_RE = re.compile(r"^(?P<prefix>[\w-]{1,25})(?P<default_version>[\d]{1,2})")
 
 GITLAB_RETRIES = int(os.getenv("UBICONFIG_GITLAB_RETRIES", "5"))
 GITLAB_BACKOFF = float(os.getenv("UBICONFIG_GITLAB_BACKOFF", "0.5"))
@@ -84,7 +82,7 @@ class GitlabLoader(Loader):
                 "Couldn't find file %s from remote repo %s" % (file_name, self._url)
             )
 
-        match = re.match(BRANCH_RE, version)
+        match = re.match(PREFIX_VERSION_RE, version)
         if not match:
             raise ValueError("Invalid version (branch name) %s" % version)
 

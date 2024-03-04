@@ -1,4 +1,5 @@
 """provide gitlab api used to read repositories"""
+
 import os
 import re
 
