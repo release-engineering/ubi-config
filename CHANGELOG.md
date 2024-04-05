@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - n/a
 
+## [v3.1.1] - 2024-04-05
+
+### Changed
+
+- `LocalLoader` is now able to load files from directories with custom names
+- Improved `GitLabLoader` logging
+
 ## [v3.1.0] - 2023-11-10
 
 ### Added
