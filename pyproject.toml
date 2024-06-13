@@ -1,0 +1,57 @@
+[tool.poetry]
+name = "ubi-config"
+version = "3.1.1"
+description = "A Python Library for accessing Universal Base Image configuration"
+license = "GPL-3.0-or-later"
+readme = "README.md"
+authors = []
+repository = "https://github.com/release-engineering/ubi-config"
+documentation = "https://release-engineering.github.io/ubi-config"
+packages = [{include = "ubiconfig"}]
+include = ["ubiconfig/utils/config_schema.json"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.dependencies]
+python = ">=3.6.2,<4.0"
+jsonschema = "*"
+PyYAML = "*"
+requests = "*"
+
+[tool.poetry.group.test]
+optional = true
+
+[tool.poetry.group.test.dependencies]
+pytest = "*"
+mock = "*"
+requests-mock = "*"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+black = ">=21.4b0"
+pre-commit = "*"
+mypy = "*"
+pylint = "*"
+pytest-cov = "*"
+bandit = "*"
+# dependencies of dependencies for python 3.6 compatibility
+wrapt = ">1.13.3"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+sphinx = "*"
+alabaster = "*"
