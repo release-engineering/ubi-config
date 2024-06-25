@@ -1,4 +1,0 @@
-pytest
-mock
-pyrsistent
-requests_mock

@@ -13,6 +13,8 @@ jobs:
           python-version: 3.8
       - name: Install Tox
         run: pip install tox
+      - name: Install Poetry
+        run: pip install poetry
       - name: Run Tox
         run: tox -e py38
   py39:
@@ -25,6 +27,8 @@ jobs:
           python-version: 3.9
       - name: Install Tox
         run: pip install tox
+      - name: Install Poetry
+        run: pip install poetry
       - name: Run Tox
         run: tox -e py39
   static:
@@ -34,23 +38,13 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: 3.9
       - name: Install Tox
         run: pip install tox
+      - name: Install Poetry
+        run: pip install poetry
       - name: Run Tox
         run: tox -e static
-  pidiff:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
-      - name: Install Tox
-        run: pip install tox
-      - name: Run Tox
-        run: tox -e pidiff
   coverage:
     runs-on: ubuntu-latest
     steps:
@@ -58,9 +52,11 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: 3.9
       - name: Install Tox
         run: pip install tox
+      - name: Install Poetry
+        run: pip install poetry
       - name: Run Tox
         run: tox -e cov
       # Codcov Action required installing pytest-cov as it needs coverage.
@@ -81,8 +77,10 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: 3.9
       - name: Install Tox
         run: pip install tox
+      - name: Install Poetry
+        run: pip install poetry
       - name: Run Tox
         run: tox -e docs
