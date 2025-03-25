@@ -71,6 +71,7 @@ def branches():
         "ubi7.1": "2189cbc2e447f796fe354f8d784d76b0a2620248",
         "ubi7": "c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f",
         "ubi8": "26d24af7859df3c4d361bd33cd57984d03abe206",
+        "ga-cleanup": "117d4af7859df3c4d361bd33cdab6784d03abe104",
     }
 
 
@@ -293,19 +294,6 @@ def test_load_file_without_providing_version(
 @patch("requests.Session")
 @patch("ubiconfig._impl.loaders._GitlabLoader._pre_load")
 @patch("ubiconfig._impl.loaders._GitlabLoader._get_branches")
-def test_load_invalid_branch_name(
-    mocked_get_branches, mocked_pre_load, mocked_session, branches, files_branch_map
-):
-    mocked_get_branches.return_value = branches
-    mocked_pre_load.return_value = files_branch_map
-
-    with pytest.raises(ValueError):
-        ubi.get_loader().load("rhel-7-server.yaml", "invalid_branch")
-
-
-@patch("requests.Session")
-@patch("ubiconfig._impl.loaders._GitlabLoader._pre_load")
-@patch("ubiconfig._impl.loaders._GitlabLoader._get_branches")
 def test_load_file_with_wanted_version(
     mocked_get_branches,
     mocked_pre_load,
@@ -421,6 +409,10 @@ def test_get_branches(mocked_session, branches, caplog):
             "commit": {"id": "2189cbc2e447f796fe354f8d784d76b0a2620248"},
         },
         {"name": "ubi8", "commit": {"id": "26d24af7859df3c4d361bd33cd57984d03abe206"}},
+        {
+            "name": "ga-cleanup",
+            "commit": {"id": "117d4af7859df3c4d361bd33cdab6784d03abe104"},
+        },
     ]
     headers = {"Content-Length": "629", "X-Total-Pages": "1", "X-Per-Page": "20"}
     mocked_session.return_value.request.return_value.headers = headers
@@ -438,17 +430,19 @@ def test_get_branches(mocked_session, branches, caplog):
 
 @patch("requests.Session")
 @patch("ubiconfig._impl.loaders._GitlabLoader._get_branches")
-def test_pre_load(mocked_get_branches, mocked_session, files_branch_map):
+def test_pre_load(mocked_get_branches, mocked_session, files_branch_map, caplog):
     branch_sha1 = OrderedDict(
         [
             ("ubi7.1", "2189cbc2e447f796fe354f8d784d76b0a2620248"),
             ("ubi7", "c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f"),
             ("ubi8", "26d24af7859df3c4d361bd33cd57984d03abe206"),
+            ("ga-cleanup", "117d4af7859df3c4d361bd33cdab6784d03abe104"),
         ]
     )
     mocked_get_branches.return_value = branch_sha1
     headers = {"Content-Length": "629", "X-Total-Pages": "1", "X-Per-Page": "20"}
     mocked_session.return_value.request.return_value.headers = headers
+
     file_list = [
         [
             {"name": "rhel-7-server.yaml", "path": "rhel-7-server.yaml"},
@@ -459,10 +453,16 @@ def test_pre_load(mocked_get_branches, mocked_session, files_branch_map):
         [{"name": "rhel-8-for-power-le.yaml", "path": "rhel-8-for-power-le.yaml"}],
     ]
     mocked_session.return_value.request.return_value.json.side_effect = file_list
+
     loader = ubi.get_loader()
     expected_map = files_branch_map
     actual_files_branch_map = loader._files_branch_map
     assert expected_map == actual_files_branch_map
+    assert "ga-cleanup" not in actual_files_branch_map
+    assert (
+        "Skipping branch ga-cleanup (name does not match with required format)"
+        in caplog.text
+    )
 
 
 def test_ubi_config(ubi7_1_config_file1):
