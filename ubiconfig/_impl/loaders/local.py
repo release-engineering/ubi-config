@@ -5,8 +5,9 @@ import re
 import yaml
 from jsonschema.exceptions import ValidationError
 
-from ubiconfig.utils.config_validation import validate_config
 from ubiconfig.config_types import UbiConfig
+from ubiconfig.utils.config_validation import validate_config
+
 from .base import PREFIX_VERSION_RE
 
 LOG = logging.getLogger("ubiconfig")

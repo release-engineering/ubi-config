@@ -1,9 +1,9 @@
 import os
 
-import yaml
 import pytest
-
+import yaml
 from jsonschema.exceptions import ValidationError
+
 from ubiconfig.utils import config_validation
 
 TEST_DATA = os.path.join(

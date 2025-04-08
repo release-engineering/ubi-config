@@ -1,10 +1,8 @@
-import os
 import logging
-
+import os
 from urllib.parse import urlparse
 
-from ._impl.loaders import _LocalLoader, _GitlabLoader
-
+from ._impl.loaders import _GitlabLoader, _LocalLoader
 
 DEFAULT_UBI_REPO = os.getenv("DEFAULT_UBI_REPO", "")
 

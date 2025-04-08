@@ -1,8 +1,8 @@
-from mock import patch, MagicMock, Mock
 import pytest
-import yaml
 import requests
 import requests_mock
+import yaml
+from mock import MagicMock, Mock, patch
 
 from ubiconfig._impl.loaders import _GitlabLoader
 
