@@ -33,7 +33,9 @@ def do_report(source):
             print("    SRPMs:\t%s => %s" % (cs.srpm.input, cs.srpm.output))
 
         if cs.debuginfo.input:
-            print("    debuginfo:\t%s => %s" % (cs.debuginfo.input, cs.debuginfo.output))
+            print(
+                "    debuginfo:\t%s => %s" % (cs.debuginfo.input, cs.debuginfo.output)
+            )
 
         if config.modules.whitelist:
             print("    modules:\t%d included" % len(config.modules.whitelist))
@@ -44,13 +46,14 @@ def do_report(source):
 
 
 def main():
-    parser = ArgumentParser(
-        description="Report available UBI config")
-    parser.add_argument('--source', help="Read UBI config from this location (URL or path)")
+    parser = ArgumentParser(description="Report available UBI config")
+    parser.add_argument(
+        "--source", help="Read UBI config from this location (URL or path)"
+    )
     args = parser.parse_args()
 
     do_report(args.source)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,18 +1,18 @@
 import logging
-import re
-import yaml
 import os
+import re
+
 import requests
-
+import yaml
 from jsonschema.exceptions import ValidationError
-from urllib3 import Retry
 from requests.adapters import HTTPAdapter
+from urllib3 import Retry
 
+from ubiconfig.config_types import UbiConfig
 from ubiconfig.utils.api.gitlab import RepoApi
 from ubiconfig.utils.config_validation import validate_config
-from ubiconfig.config_types import UbiConfig
 
-from .base import Loader, PREFIX_VERSION_RE
+from .base import PREFIX_VERSION_RE, Loader
 
 LOG = logging.getLogger("ubiconfig")
 

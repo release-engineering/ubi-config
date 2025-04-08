@@ -6,13 +6,13 @@ except ImportError:
     from ordereddict import OrderedDict
 
 import logging
+
 import pytest
-from mock import patch
 import yaml
 from jsonschema.exceptions import ValidationError
+from mock import patch
 
-from ubiconfig import ubi, UbiConfig
-
+from ubiconfig import UbiConfig, ubi
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "../data")
 ubi.DEFAULT_UBI_REPO = "https://contentdelivery.com/ubi/data"

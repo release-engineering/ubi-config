@@ -1,5 +1,6 @@
-import pytest
 from urllib.parse import urljoin
+
+import pytest
 
 from ubiconfig.utils.api import gitlab
 

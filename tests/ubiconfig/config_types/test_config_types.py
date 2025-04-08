@@ -1,6 +1,6 @@
 import pytest
 
-from ubiconfig.config_types import packages, modules, content_sets, flags
+from ubiconfig.config_types import content_sets, flags, modules, packages
 
 
 def test_package_with_arch():

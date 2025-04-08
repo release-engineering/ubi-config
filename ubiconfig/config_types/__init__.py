@@ -1,7 +1,7 @@
-from .modules import Modules
-from .packages import Packages
 from .content_sets import ContentSetsMapping
 from .flags import Flags
+from .modules import Modules
+from .packages import Packages
 
 
 class UbiConfig(object):
