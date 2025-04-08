@@ -3,20 +3,6 @@ name: Tox tests
 on: [push, pull_request]
 
 jobs:
-  py38:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
-      - name: Install Tox
-        run: pip install tox
-      - name: Install Poetry
-        run: pip install poetry
-      - name: Run Tox
-        run: tox -e py38
   py39:
     runs-on: ubuntu-latest
     steps:
@@ -24,13 +10,27 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: "3.9"
       - name: Install Tox
         run: pip install tox
       - name: Install Poetry
         run: pip install poetry
       - name: Run Tox
         run: tox -e py39
+  py313:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+      - name: Install Tox
+        run: pip install tox
+      - name: Install Poetry
+        run: pip install poetry
+      - name: Run Tox
+        run: tox -e py313
   static:
     runs-on: ubuntu-latest
     steps:
@@ -38,7 +38,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: "3.13"
       - name: Install Tox
         run: pip install tox
       - name: Install Poetry
@@ -52,14 +52,14 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: "3.13"
       - name: Install Tox
         run: pip install tox
       - name: Install Poetry
         run: pip install poetry
       - name: Run Tox
         run: tox -e cov
-      # Codcov Action required installing pytest-cov as it needs coverage.
+      # Codecov Action required installing pytest-cov as it needs coverage.
       # The coverage library installed within tox is in virt-env and not
       # accessible to Codecov.
       - name: Install pytest cov
@@ -77,7 +77,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: "3.13"
       - name: Install Tox
         run: pip install tox
       - name: Install Poetry
