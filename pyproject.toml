@@ -40,14 +40,14 @@ requests-mock = "*"
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-black = ">=21.4b0"
-pre-commit = "*"
-mypy = "*"
-pylint = "*"
-pytest-cov = "*"
-bandit = "*"
+black = "==25.1.0"
+pre-commit = "4.2.0"
+mypy = "1.15.0"
+pylint = "3.3.6"
+pytest-cov = "6.1.0"
+bandit = "1.8.3"
 # dependencies of dependencies for python 3.6 compatibility
-wrapt = ">1.13.3"
+wrapt = "==1.17.2"
 
 [tool.poetry.group.docs]
 optional = true
