@@ -82,12 +82,9 @@ class GitlabLoader(Loader):
                 "Couldn't find file %s from remote repo %s" % (file_name, self._url)
             )
 
-        match = re.match(PREFIX_VERSION_RE, version)
-        if not match:
-            raise ValueError("Invalid version (branch name) %s" % version)
-
-        prefix = match.group("prefix")
-        default_version = match.group("default_version")
+        match = re.match(PREFIX_VERSION_RE, version)  # type: ignore
+        prefix = match.group("prefix")  # type: ignore
+        default_version = match.group("default_version")  # type: ignore
 
         default_branch = f"{prefix}{default_version}"
 
@@ -135,12 +132,21 @@ class GitlabLoader(Loader):
         return ubi_configs
 
     def _pre_load(self):
-        """Iterate all branches to get a mapping of {file_path: (branch, sha1)...}"""
+        """
+        Iterate all branches to get a mapping of {file_path: (branch, sha1)...}
+        Log a warning when invalid branch names are used.
+        """
         files_branch_map = {}
 
         LOG.debug("Loading config files from all branches")
 
         for branch, sha1 in self._branches.items():
+            if not re.match(PREFIX_VERSION_RE, branch):
+                LOG.warning(
+                    "Skipping branch %s (name does not match with required format)",
+                    branch,
+                )
+                continue
             page = 1
             while True:
                 file_list_api = self._repo_api.get_file_list_api(branch=sha1, page=page)
