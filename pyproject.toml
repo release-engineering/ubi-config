@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ubi-config"
-version = "3.2.0"
+version = "3.2.1"
 description = "A Python Library for accessing Universal Base Image configuration"
 license = "GPL-3.0-or-later"
 readme = "README.md"
