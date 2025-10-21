@@ -43,11 +43,11 @@ optional = true
 black = "==25.9.0"
 pre-commit = "4.3.0"
 mypy = "1.18.2"
-pylint = "<4.0.0"
+pylint = "==3.3.9"
 pytest-cov = "7.0.0"
 bandit = "1.8.6"
 # dependencies of dependencies for python 3.6 compatibility
-wrapt = "==1.17.3"
+wrapt = "==2.0.0"
 
 [tool.poetry.group.docs]
 optional = true
