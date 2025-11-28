@@ -13,8 +13,6 @@ jobs:
           python-version: "3.9"
       - name: Install Tox
         run: pip install tox
-      - name: Install Poetry
-        run: pip install poetry
       - name: Run Tox
         run: tox -e py39
   py313:
@@ -27,8 +25,6 @@ jobs:
           python-version: "3.13"
       - name: Install Tox
         run: pip install tox
-      - name: Install Poetry
-        run: pip install poetry
       - name: Run Tox
         run: tox -e py313
   static:
@@ -41,8 +37,6 @@ jobs:
           python-version: "3.13"
       - name: Install Tox
         run: pip install tox
-      - name: Install Poetry
-        run: pip install poetry
       - name: Run Tox
         run: tox -e static
   coverage:
@@ -55,8 +49,6 @@ jobs:
           python-version: "3.13"
       - name: Install Tox
         run: pip install tox
-      - name: Install Poetry
-        run: pip install poetry
       - name: Run Tox
         run: tox -e cov
       # Codecov Action required installing pytest-cov as it needs coverage.
@@ -80,7 +72,5 @@ jobs:
           python-version: "3.13"
       - name: Install Tox
         run: pip install tox
-      - name: Install Poetry
-        run: pip install poetry
       - name: Run Tox
         run: tox -e docs

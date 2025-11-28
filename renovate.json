@@ -3,6 +3,13 @@
     "extends": [
       "config:best-practices", "group:all"
     ],
+    "pip_requirements": {
+      "enabled": false
+    },
+    "pip-compile": {
+      "enabled": true,
+      "managerFilePatterns": ["requirements[^/]*\\.txt$"]
+    },
     "packageRules": [
       {
         "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
