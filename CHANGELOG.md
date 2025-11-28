@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - n/a
 
+## [v3.2.2] - 2025-11-28
+
+- Replace poetry with pip, restore py36 support
+
 ## [v3.2.1] - 2025-05-05
 
 - More robust handling of git branches

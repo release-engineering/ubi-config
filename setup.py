@@ -1,5 +1,3 @@
-import os
-
 from setuptools import find_packages, setup
 
 
@@ -15,7 +13,7 @@ def get_requirements():
 
 setup(
     name="ubi-config",
-    version="3.2.1",
+    version="3.2.2",
     description="A Python Library for accessing Universal Base Image configuration",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
