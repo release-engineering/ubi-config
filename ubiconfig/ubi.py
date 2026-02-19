@@ -13,7 +13,7 @@ class LoaderError(RuntimeError):
     pass
 
 
-def get_loader(source=None):
+def get_loader(source=None, branch_prefix=None):
     """Get a Loader instance which is used to load configurations.
 
     ``source`` should be provided as one of the following:
@@ -60,7 +60,7 @@ def get_loader(source=None):
     parsed = urlparse(source)
     if parsed.netloc:
         # It's a URL, use the gitlab loader
-        return _GitlabLoader(source)
+        return _GitlabLoader(source, branch_prefix)
 
     # It should be a local path
     if not os.path.isdir(source):
