@@ -1,0 +1,7 @@
+mock == 5.2.0
+pre-commit == 4.3.0
+pylint == 3.3.9
+pytest-cov == 7.0.0
+pytest == 8.4.2
+requests-mock == 1.12.1
+typing-extensions == 4.13.0
