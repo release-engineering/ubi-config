@@ -4,6 +4,7 @@
 - Loads all config from the config source passed on the command-line (or the default)
 - Prints a basic report on the config found, mappings, package counts etc.
 """
+
 from argparse import ArgumentParser
 
 from ubiconfig import get_loader
