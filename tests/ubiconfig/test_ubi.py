@@ -465,6 +465,44 @@ def test_pre_load(mocked_get_branches, mocked_session, files_branch_map, caplog)
     )
 
 
+@patch("requests.Session")
+@patch("ubiconfig._impl.loaders._GitlabLoader._get_branches")
+def test_pre_load_with_branch_prefix(mocked_get_branches, mocked_session, caplog):
+    branch_sha1 = OrderedDict(
+        [
+            ("ubi7.1", "2189cbc2e447f796fe354f8d784d76b0a2620248"),
+            ("ubi7", "c99cb8d7dae2e78e8cc7e720d3f950d1c5a0b51f"),
+            ("test-prefix8.1", "26d24af7859df3c4d361bd33cd57984d03abe206"),
+            ("test-prefix8", "117d4af7859df3c4d361bd33cdab6784d03abe104"),
+        ]
+    )
+    mocked_get_branches.return_value = branch_sha1
+    headers = {"Content-Length": "629", "X-Total-Pages": "1", "X-Per-Page": "20"}
+    mocked_session.return_value.request.return_value.headers = headers
+
+    file_list_ubi7_1 = [
+        {"name": "rhel-7-server.yaml", "path": "rhel-7-server.yaml"},
+    ]
+    file_list_ubi7 = [
+        {"name": "rhel-7-server.yaml", "path": "rhel-7-server.yaml"},
+    ]
+
+    mocked_session.return_value.request.return_value.json.side_effect = [
+        file_list_ubi7_1,
+        file_list_ubi7,
+    ]
+
+    loader = ubi.get_loader(branch_prefix="ubi")
+
+    actual_files_branch_map = loader._files_branch_map
+
+    assert "rhel-7-server.yaml" in actual_files_branch_map
+    assert len(actual_files_branch_map["rhel-7-server.yaml"]) == 2
+    assert actual_files_branch_map["rhel-7-server.yaml"][0][0] == "ubi7.1"
+    assert actual_files_branch_map["rhel-7-server.yaml"][1][0] == "ubi7"
+    assert "Skipping branch test-prefix" in caplog.text
+
+
 def test_ubi_config(ubi7_1_config_file1):
     config_dict = yaml.safe_load(ubi7_1_config_file1)
     config = UbiConfig.load_from_dict(config_dict, "rhel-atomic-host.yaml", "7.1")

@@ -23,12 +23,13 @@ GITLAB_BACKOFF = float(os.getenv("UBICONFIG_GITLAB_BACKOFF", "0.5"))
 class GitlabLoader(Loader):
     """Load configuration from a remote repo on gitlab."""
 
-    def __init__(self, url):
+    def __init__(self, url, branch_prefix=None):
         """
         :param url: gitlab repo url in form of `https://<host>/<repo>`
         """
         self._url = url
         self._session = None
+        self._branch_prefix = branch_prefix
         self._repo_api = RepoApi(self._url.rstrip("/"))
         self._branches = self._get_branches()
         self._files_branch_map = self._pre_load()
@@ -85,7 +86,6 @@ class GitlabLoader(Loader):
         match = re.match(PREFIX_VERSION_RE, version)  # type: ignore
         prefix = match.group("prefix")  # type: ignore
         default_version = match.group("default_version")  # type: ignore
-
         default_branch = f"{prefix}{default_version}"
 
         sha1 = None
@@ -141,10 +141,20 @@ class GitlabLoader(Loader):
         LOG.debug("Loading config files from all branches")
 
         for branch, sha1 in self._branches.items():
-            if not re.match(PREFIX_VERSION_RE, branch):
+            branch_regex = re.match(PREFIX_VERSION_RE, branch)
+            if not branch_regex:
                 LOG.warning(
                     "Skipping branch %s (name does not match with required format)",
                     branch,
+                )
+                continue
+            prefix = branch_regex.group("prefix")
+            if self._branch_prefix and self._branch_prefix != prefix:
+                LOG.warning(
+                    "Skipping branch %s \
+                        (branch does not match with cdn definition branch %s)",
+                    prefix,
+                    self._branch_prefix,
                 )
                 continue
             page = 1
