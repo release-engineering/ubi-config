@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - n/a
 
+## [v3.3.0] - 2026-03-02
+
+- Added `branch_prefix` optional parameter for GitLab loader
+
 ## [v3.2.2] - 2025-11-28
 
 - Replace poetry with pip, restore py36 support

@@ -13,7 +13,7 @@ def get_requirements():
 
 setup(
     name="ubi-config",
-    version="3.2.2",
+    version="3.3.0",
     description="A Python Library for accessing Universal Base Image configuration",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
