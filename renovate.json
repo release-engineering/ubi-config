@@ -3,6 +3,7 @@
     "extends": [
       "config:best-practices", "group:all", ":enableVulnerabilityAlerts"
     ],
+    "additionalBranchPrefix": "{{packageFile}}-",
     "pip_requirements": {
       "enabled": false
     },
