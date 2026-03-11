@@ -20,6 +20,10 @@
       {
         "matchDepTypes": ["uses-with"],
         "enabled": false
+      },
+      {
+        "matchFileNames": ["requirements.in"],
+        "enabled": false
       }
     ],
     "schedule": ["every weekend"]
