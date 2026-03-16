@@ -23,10 +23,8 @@ class RepoApi(object):
     def __init__(self, repo_url, v_3=False):
         m = GIT_LAB_URL_FMT.match(repo_url)
         if not m:
-            raise ValueError(
-                "The hostname must end with '.com|org|net' \
-or set GIT_LAB_URL_FMT by yourself"
-            )
+            raise ValueError("The hostname must end with '.com|org|net' \
+or set GIT_LAB_URL_FMT by yourself")
         self.host = m.group("host")
         self.repo_id = m.group("project").replace("/", "%2F")
         self.v_3 = v_3
