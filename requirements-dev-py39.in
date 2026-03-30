@@ -1,3 +1,4 @@
+-r requirements.in
 mock
 pylint
 pytest-cov
