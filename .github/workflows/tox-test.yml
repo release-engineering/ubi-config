@@ -41,6 +41,8 @@ jobs:
         run: tox -e static
   coverage:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - name: Setup Python
@@ -57,9 +59,12 @@ jobs:
       - name: Install pytest cov
         run: pip install pytest-cov
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6
+        uses: codecov/codecov-action@v6
+        if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref =='refs/heads/master')
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
+          flags: unit-tests
+          files: coverage.xml
           fail_ci_if_error: true
           verbose: true
   docs:
