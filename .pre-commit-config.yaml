@@ -5,7 +5,7 @@ repos:
     - id: black
       language_version: python3.13
 -   repo: https://github.com/pycqa/isort/
-    rev: 9.0.0a3
+    rev: 9.0.0b1
     hooks:
     - id: isort
       args: ["--profile", "black"]
