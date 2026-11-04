@@ -500,7 +500,11 @@ def test_pre_load_with_branch_prefix(mocked_get_branches, mocked_session, caplog
     assert len(actual_files_branch_map["rhel-7-server.yaml"]) == 2
     assert actual_files_branch_map["rhel-7-server.yaml"][0][0] == "ubi7.1"
     assert actual_files_branch_map["rhel-7-server.yaml"][1][0] == "ubi7"
-    assert "Skipping branch test-prefix" in caplog.text
+    for branch in ("test-prefix8.1", "test-prefix8"):
+        assert (
+            f"Skipping branch {branch} "
+            "(prefix test-prefix does not match branch_prefix ubi)"
+        ) in caplog.text
 
 
 def test_ubi_config(ubi7_1_config_file1):
