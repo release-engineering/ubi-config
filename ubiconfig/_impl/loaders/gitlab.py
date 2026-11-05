@@ -151,8 +151,8 @@ class GitlabLoader(Loader):
             prefix = branch_regex.group("prefix")
             if self._branch_prefix and self._branch_prefix != prefix:
                 LOG.warning(
-                    "Skipping branch %s \
-                        (branch does not match with cdn definition branch %s)",
+                    "Skipping branch %s (prefix %s does not match branch_prefix %s)",
+                    branch,
                     prefix,
                     self._branch_prefix,
                 )
